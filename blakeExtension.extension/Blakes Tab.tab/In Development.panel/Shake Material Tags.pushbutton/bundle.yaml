@@ -1,0 +1,4 @@
+title:
+  en_us: Shake Material Tags
+tooltip:
+  en_us: Material Tags can lose their association with their host and show a "?" instead of a value. This tool forces them to regenerate.
