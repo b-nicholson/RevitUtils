@@ -1,0 +1,17 @@
+{
+    "extensions": [
+        {
+            "builtin": "True",
+            "type": "extension",
+            "rocket_mode_compatible": "False",
+            "name": "Blake Dev Tools",
+            "description": "WIP Tools for PyRevit",
+            "author": "Blake Nicholson",
+            "author_profile": "https://github.com/b-nicholson",
+            "url": "https://github.com/b-nicholson/RevitUtils.git",
+            "website": "",
+            "image": "",
+            "dependencies": []
+        }
+    ]
+}
