@@ -1,0 +1,5 @@
+sync timers using hooks
+model in place over use
+hook to flag when trying to import cad in project environment, but not in family environment. Disable warnings by writing username to csv.
+
+sync with central timer hook
