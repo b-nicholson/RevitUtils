@@ -35,9 +35,10 @@ def select_by_wall_type():
     wall_types_list = []
     for wt in wall_type_collector:
         wall_types_list.append(WallTypeSelector(wt))
-
-    print(wall_type_collector)
     select_type = forms.SelectFromList.show(wall_types_list, multiselect=False, button_name='Select Type Name')
+    while select_type is None:
+        forms.alert('You must make a selection. Try again?', yes=True, no=True, exitscript=True)
+        select_type = forms.SelectFromList.show(wall_types_list, multiselect=False, button_name='Select Type Name')
     return select_type
 
 
@@ -67,7 +68,7 @@ if len(rawSelection) > 0:
 
 else:
     selected_option = forms.CommandSwitchWindow.show(
-        ['Entire Model', 'Active View', 'Selection'],
+        ['Entire Model', 'Active View', 'New Selection'],
         message='Select Option:',
     )
 
@@ -108,7 +109,7 @@ else:
                 wherePassesFilterRequired = True
                 selType = select_by_new_selection()
 
-    if selected_option == 'Selection':
+    if selected_option == 'New Selection':
         with forms.WarningBar(title='Select Walls'):
             selectionNew = revit.pick_elements()
             newSelectionIds = []
