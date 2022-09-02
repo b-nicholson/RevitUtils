@@ -28,7 +28,7 @@ https://github.com/andydandy74/ClockworkForDynamo
 
 '''
 
-__title__ = 'Move Room\nCalculation\nPoint'
+__title__ = 'Move Room\nLocation Pt'
 
 
 inf = float("inf")

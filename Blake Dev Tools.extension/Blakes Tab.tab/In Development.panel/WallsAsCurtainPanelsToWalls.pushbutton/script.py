@@ -33,9 +33,30 @@ t = DB.Transaction(doc, "Walls as Curtain Panels")
 t.Start()
 
 for panel in panel_collector:
-    if panel.GroupId.IntegerValue < 0:
+
+    # gId = panel.GroupId
+    # if gId != DB.ElementId(-1):
+    #     groups = []
+    #     groupTypeIds = []
+    #     for g in gId:
+    #         elems = doc.GetElement(g)
+    #         groups.append(elems)
+    #         groupTypeIds.append(elems.GroupType.Id)
+    #     if len()
+
+
+
+    # -1 Element id means element is not inside a group
+    if panel.GroupId == DB.ElementId(-1):
         scheduleAsPanels = panel.get_Parameter(DB.BuiltInParameter.HOST_PANEL_SCHEDULE_AS_PANEL_PARAM)
         scheduleAsPanels.Set(0)
 
+
+
+
 t.Commit()
+
+
+
+
 '''add options for active view. return group info. add logic for single group instances'''

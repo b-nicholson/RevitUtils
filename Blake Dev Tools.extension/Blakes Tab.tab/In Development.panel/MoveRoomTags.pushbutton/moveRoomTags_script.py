@@ -1,4 +1,4 @@
-"""Moves Room Tags to Room Calculation Point in Active View"""
+"""Moves Room Tags to Room Location Point in Active View"""
 
 __title__ = 'Move\nRoom Tags'
 
