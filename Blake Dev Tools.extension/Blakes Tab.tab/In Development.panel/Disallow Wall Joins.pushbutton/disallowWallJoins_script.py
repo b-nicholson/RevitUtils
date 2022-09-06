@@ -68,7 +68,7 @@ if len(rawSelection) > 0:
     if len(filteredSelection) > 0:
         wall_collector = filteredSelection
     else:
-        forms.alert('Selection must contain a wall. Try again.', exitscript=True)
+        forms.alert('Selection must contain a wall.\n (No Groups). \n Try again.', exitscript=True)
 
 else:
     selected_option = forms.CommandSwitchWindow.show(
