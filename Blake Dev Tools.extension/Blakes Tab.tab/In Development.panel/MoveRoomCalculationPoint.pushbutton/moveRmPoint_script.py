@@ -1,4 +1,8 @@
-from Autodesk.Revit.DB import FilteredElementCollector, BuiltInCategory, Transaction, SpatialElementBoundaryOptions, AreaVolumeSettings, SpecTypeId, SpatialElementGeometryCalculator, SpatialElementType, XYZ
+# -*- coding: utf-8 -*-
+from Autodesk.Revit.DB import FilteredElementCollector, BuiltInCategory, Transaction, SpatialElementBoundaryOptions, \
+    AreaVolumeSettings, SpatialElementGeometryCalculator, SpatialElementType, XYZ
+import Autodesk.Revit.DB as DB
+from pyrevit import script
 from math import sqrt
 import time
 import sys
@@ -7,17 +11,16 @@ from Queue import PriorityQueue
 
 doc = __revit__.ActiveUIDocument.Document
 
+nonOperableElements = 0
+nonOperableGroups = []
+
 # Creating collector instance and collecting all the rooms from the model
 room_collector = FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_Rooms).WhereElementIsNotElementType()
 
+'''Chain of yoink going on here. Dynamo interpretation taken Genius Loci dynamo package,
+which is based on the mapbox PolyLabel algorithm.
+Modified to suit pyRevit environment and custom curated to rooms. Some pieces taken from Clockwork room.Boundaries node
 
-
-'''Chain of yoink going on here. Dyanmo intrepretation taken Genuis Loci dynamo package, which is based on the mapbox polylabel algorithm.
-Modifiied to suit pyRevit environment and custom curated to rooms. Some pieces taken from Clockwork room.Boundaries node.
-
-Alban de Chasteigner 2020
-twitter : @geniusloci_bim
-geniusloci.bim@gmail.com
 https://github.com/albandechasteigner/GeniusLociForDynamo
 
 Finds pole of inaccessibility for a given polygon. Based on Vladimir Agafonkin's https://github.com/mapbox/polylabel
@@ -33,9 +36,8 @@ __title__ = 'Move Room\nLocation Pt'
 
 inf = float("inf")
 
-UIUnit = doc.GetUnits().GetFormatOptions(SpecTypeId.Length).GetUnitTypeId()
 
-#yoinked
+# yoinked
 def _point_to_polygon_distance(x, y, polygon):
     inside = False
     min_dist_sq = inf
@@ -56,7 +58,8 @@ def _point_to_polygon_distance(x, y, polygon):
         return -result
     return result
 
-#yoinked
+
+# yoinked
 def _get_seg_dist_sq(px, py, a, b):
     x = a[0]
     y = a[1]
@@ -64,22 +67,23 @@ def _get_seg_dist_sq(px, py, a, b):
     dy = b[1] - y
 
     if dx != 0 or dy != 0:
-        t = ((px - x) * dx + (py - y) * dy) / (dx * dx + dy * dy)
+        tt = ((px - x) * dx + (py - y) * dy) / (dx * dx + dy * dy)
 
-        if t > 1:
+        if tt > 1:
             x = b[0]
             y = b[1]
 
-        elif t > 0:
-            x += dx * t
-            y += dy * t
+        elif tt > 0:
+            x += dx * tt
+            y += dy * tt
 
     dx = px - x
     dy = py - y
 
     return dx * dx + dy * dy
 
-#yoinked
+
+# yoinked
 class Cell(object):
     def __init__(self, x, y, h, polygon):
         self.h = h
@@ -103,7 +107,8 @@ class Cell(object):
     def __eq__(self, other):
         return self.max == other.max
 
-#yoinked
+
+# yoinked
 def _get_centroid_cell(polygon):
     area = 0
     x = 0
@@ -121,9 +126,9 @@ def _get_centroid_cell(polygon):
     return Cell(x / area, y / area, 0, polygon)
     pass
 
-#yoinked
-def polylabel(polygon, precision=1.0):
-    mess=[]
+
+# yoinked
+def polylabel(polygon, precision=1.0, with_distance=False):
     # find bounding box
     first_item = polygon[0][0]
     min_x = first_item[0]
@@ -176,7 +181,6 @@ def polylabel(polygon, precision=1.0):
         if cell.d > best_cell.d:
             best_cell = cell
 
-
         if cell.max - best_cell.d <= precision:
             continue
 
@@ -190,46 +194,59 @@ def polylabel(polygon, precision=1.0):
         c = Cell(cell.x + h, cell.y + h, h, polygon)
         cell_queue.put((-c.max, time.time(), c))
         num_of_probes += 4
-    return XYZ(best_cell.x, best_cell.y,z)
+    return XYZ(best_cell.x, best_cell.y, z)
 
 
-
-
-
-#bit of a yoink from Clockwork. In order to find the boundaries of the room, you need to first tell it HOW the room is being calculated. iu
+# this is a bit of a yoink from Clockwork. In order to find the boundaries of the room,
+# you need to first tell it HOW the room is being calculated.
 calculator = SpatialElementGeometryCalculator(doc)
 options = SpatialElementBoundaryOptions()
 # get boundary location from area computation settings
 boundloc = AreaVolumeSettings.GetAreaVolumeSettings(doc).GetSpatialElementBoundaryLocation(SpatialElementType.Room)
 options.SpatialElementBoundaryLocation = boundloc
 
-#list of pts used to calculate the polygon pole of inaccessibility. Be careful with list levels for rooms with holes in them.
-pointList=[]
-#existing room location points
+# list of pts used to calculate the polygon pole of inaccessibility.
+# Be careful with list levels for rooms with holes in them.
+pointList = []
+# existing room location points
 roomLocations = []
 # list of rooms with an area (filtered unplaced rooms)
 cleanedRooms = []
 
 for room in room_collector:
-    if (room.Area > 0):
-        crv = []
-        cleanedRooms.append(room)
-        roomLocations.append(room.Location.Point)
-        for boundlist in room.GetBoundarySegments(options):
-            for bound in boundlist:
-                crv.append([bound.GetCurve().GetEndPoint(0).X,bound.GetCurve().GetEndPoint(0).Y])
-                z = bound.GetCurve().GetEndPoint(0).Z
-        pointList.append(crv)
+    if room.Area > 0:
+        if room.GroupId == DB.ElementId.InvalidElementId:
+            room_is_editable = True
+        else:
+            group = room.Document.GetElement(room.GroupId)
+            room_is_editable = False
+            nonOperableElements += 1
+            nonOperableGroups.append((group.Id, group.Name))
+        if room_is_editable is True:
+            crv = []
+            cleanedRooms.append(room)
+            roomLocations.append(room.Location.Point)
+            for boundlist in room.GetBoundarySegments(options):
+                for bound in boundlist:
+                    crv.append([bound.GetCurve().GetEndPoint(0).X, bound.GetCurve().GetEndPoint(0).Y])
+                    z = bound.GetCurve().GetEndPoint(0).Z
+            pointList.append(crv)
 
 centroids = [polylabel([listPoint]) for listPoint in pointList]
 
 t = Transaction(doc, "Move Room Calculation Points")
 t.Start()
 
-for (rl,cent,finalrm) in zip(roomLocations, centroids, cleanedRooms):
+for (rl, cent, finalrm) in zip(roomLocations, centroids, cleanedRooms):
     finalrm.Location.Move(cent-rl)
 
 t.Commit()
 
-
-
+if len(nonOperableGroups) > 0:
+    output = script.get_output()
+    output.print_md("# Warning!")
+    output.print_md("Unable to edit " + (str(nonOperableElements)) + " rooms since they are in groups. \
+                                                                        Their groups are listed below:")
+    unique_groups = set(nonOperableGroups)
+    for grp in unique_groups:
+        print ("■ " + output.linkify(grp[0]) + " Type Name : " + (grp[1]))
