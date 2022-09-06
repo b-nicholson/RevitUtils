@@ -1,10 +1,11 @@
+# -*- coding: utf-8 -*-
 """Disallows Wall Joins"""
 
 __title__ = 'Disallow\nWall Joins'
 
 import Autodesk.Revit.DB as DB
 
-from pyrevit import forms, revit, clr
+from pyrevit import forms, revit, clr, script
 
 clr.AddReference('System')
 from System.Collections.Generic import List
@@ -19,6 +20,9 @@ class WallTypeSelector(forms.TemplateListItem):
     def name(self):
         return "Type Name: {}".format(DB.Element.Name.GetValue(self.item))
 
+
+nonOperableElements = 0
+nonOperableGroups = []
 
 wall_collector = []
 wherePassesFilterRequired = False
@@ -148,7 +152,27 @@ t.Start()
 # Iterate over walls and disallow joins on both ends
 for wall in wall_collector:
     if wall is not None:
-        DB.WallUtils.DisallowWallJoinAtEnd(wall, 0)
-        DB.WallUtils.DisallowWallJoinAtEnd(wall, 1)
-
+        if wall.GroupId == DB.ElementId.InvalidElementId:
+            wall_is_editable = True
+        else:
+            group = wall.Document.GetElement(wall.GroupId)
+            groupSize = group.GroupType.Groups.Size
+            if groupSize == 1:
+                wall_is_editable = True
+            else:
+                wall_is_editable = False
+                nonOperableElements += 1
+                nonOperableGroups.append((group.Id, group.Name))
+        if wall_is_editable is True:
+            DB.WallUtils.DisallowWallJoinAtEnd(wall, 0)
+            DB.WallUtils.DisallowWallJoinAtEnd(wall, 1)
 t.Commit()
+
+if len(nonOperableGroups) > 0:
+    output = script.get_output()
+    output.print_md("# Warning!")
+    output.print_md("Unable to edit " + (str(nonOperableElements)) + " walls since they are in groups with more than \
+                                                                   1 instance. Their groups are listed below:")
+    unique_groups = set(nonOperableGroups)
+    for grp in unique_groups:
+        print ("■ " + output.linkify(grp[0]) + " Type Name : " + (grp[1]))
