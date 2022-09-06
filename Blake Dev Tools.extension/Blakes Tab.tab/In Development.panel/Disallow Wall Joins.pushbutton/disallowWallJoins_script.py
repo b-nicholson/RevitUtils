@@ -74,7 +74,7 @@ else:
 
     if selected_option == 'Entire Model':
         entireModel = forms.alert("This change will be applied to the entire model, "
-                                  "across all phases, design options etc.\n\n"
+                                  "across all phases, design options, etc.\n\n"
                                   "This must be used with EXTREME caution\n\n"
                                   "Are you sure you want to do this?",
                                   ok=False, yes=True, no=True)
