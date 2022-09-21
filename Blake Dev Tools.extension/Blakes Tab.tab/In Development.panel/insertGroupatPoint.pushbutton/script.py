@@ -8,29 +8,31 @@ uidoc = __revit__.ActiveUIDocument
 activeView = doc.ActiveView
 
 
-class JigTypeSelector(forms.TemplateListItem):
+class TypeSelector(forms.TemplateListItem):
     @property
     def name(self):
-        return "Family Name: {f_name}      Type Name: {t_name}"\
-            .format(f_name=DB.ElementType.FamilyName.GetValue(self.item), t_name=DB.Element.Name.GetValue(self.item))
+        # try:
+        fam_name = DB.ElementType.FamilyName.GetValue(self.item)
+        if fam_name == "Model Group":
+            name = "Group Name: {}".format(DB.Element.Name.GetValue(self.item))
+        else:
+            name = "Family Name: {f_name} --- Type Name: {t_name}"\
+                .format(f_name=fam_name,
+                        t_name=DB.Element.Name.GetValue(self.item))
+
+        return name
 
 
-class GroupSelector(forms.TemplateListItem):
-    @property
-    def name(self):
-        return "Group Name: {}".format(DB.Element.Name.GetValue(self.item))
-
-
-def item_selector(type_collector, is_group):
+def item_selector(type_collector):
     types_list = []
     button_name = ""
     for item in type_collector:
-        if not is_group:
-            types_list.append(JigTypeSelector(item))
-            button_name = "Select Family Type to Use for Group Insertion"
+        if item.FamilyName == "Model Group":
+            types_list.append(TypeSelector(item))
+            button_name = "Select Group Type to Place at Family Locations"
         else:
-            types_list.append(GroupSelector(item))
-            button_name = "Select Group Type to Place"
+            types_list.append(TypeSelector(item))
+            button_name = "Select Family Type to Use for Group Placement Point"
     select_type = forms.SelectFromList.show(types_list, multiselect=False, button_name=button_name)
     while select_type is None:
         forms.alert('You must make a selection. Try again?', yes=True, no=True, exitscript=True)
@@ -44,7 +46,7 @@ def place_group_at_family_instance_pt(group_type_list, family_type_selection):
         .WherePasses(family_instance_filter)\
         .ToElements()
 
-    group_type = item_selector(group_type_list, True)
+    group_type = item_selector(group_type_list)
 
     locations = []
     rotations = []
@@ -87,7 +89,7 @@ group_type_collector = DB.FilteredElementCollector(doc) \
                         .WhereElementIsElementType() \
                         .ToElements()
 
-type_selection = item_selector(jig_type_collector, False).Id
+type_selection = item_selector(jig_type_collector).Id
 
 place_group_at_family_instance_pt(group_type_collector, type_selection)
 
