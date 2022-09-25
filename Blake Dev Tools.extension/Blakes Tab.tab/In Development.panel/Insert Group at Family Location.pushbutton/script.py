@@ -34,8 +34,9 @@ def item_selector(type_collector):
             types_list.append(TypeSelector(item))
             button_name = "Select Group Type to Place at Family Locations"
         else:
-            types_list.append(TypeSelector(item))
-            button_name = "Select Family Type to Use for Group Placement Point"
+            if item.IsActive:
+                types_list.append(TypeSelector(item))
+                button_name = "Select Family Type to Use for Group Placement Point"
     select_type = forms.SelectFromList.show(types_list, multiselect=False, button_name=button_name)
     while select_type is None:
         forms.alert('You must make a selection. Try again?', yes=True, no=True, exitscript=True)
@@ -50,20 +51,18 @@ def place_group_at_family_instance_pt(group_type_list, family_type_selection):
         .ToElements()
 
     group_type = item_selector(group_type_list)
-
-    locations = []
-    rotations = []
-    mirrored = []
     max_value = len(jig_collector)
 
-    for jig in jig_collector:
-        locations.append(jig.Location.Point)
-        rotations.append(jig.Location.Rotation)
-        mirrored.append(jig.Mirrored)
-
+    if max_value > 0:
+        t.Start()
+    else:
+        quit()
     with ProgressBar(title='Placing Groups... ({value} of {max_value})', cancellable=True) as pb:
         i = 0
-        for loc, angle, flip in zip(locations, rotations, mirrored):
+        for jig in jig_collector:
+            loc = jig.Location.Point
+            angle = jig.Location.Rotation
+            flip = jig.Mirrored
             new_group = doc.Create.PlaceGroup(loc, group_type)
             axis_line = DB.Line.CreateBound(loc, loc + DB.XYZ.BasisZ)
             DB.ElementTransformUtils.RotateElement(doc, new_group.Id, axis_line, angle)
@@ -84,6 +83,7 @@ def place_group_at_family_instance_pt(group_type_list, family_type_selection):
             else:
                 pb.update_progress(i, max_value)
             i += 1
+    t.Commit()
 
 
 jig_type_collector = DB.FilteredElementCollector(doc) \
@@ -99,9 +99,9 @@ group_type_collector = DB.FilteredElementCollector(doc) \
 type_selection = item_selector(jig_type_collector).Id
 
 t = DB.Transaction(doc, "Place Groups at Point")
-t.Start()
+
 place_group_at_family_instance_pt(group_type_collector, type_selection)
-t.Commit()
+
 
 '''mirroring needs to be the very last step, since the MirrorElement method does not return the element ids!?!?
 must make the axis_plane creation's 2nd point be rotated by the family's rotation
