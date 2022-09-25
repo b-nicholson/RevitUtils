@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+
+__title__ = 'Insert Group at\nFamily Locations'
 from math import sin, cos
 import Autodesk.Revit.DB as DB
 from pyrevit import forms
