@@ -3,7 +3,7 @@
         {
             "builtin": "True",
             "type": "extension",
-            "rocket_mode_compatible": "False",
+            "rocket_mode_compatible": "True",
             "name": "Blake Dev Tools",
             "description": "WIP Tools for PyRevit",
             "author": "Blake Nicholson",
