@@ -34,7 +34,7 @@ def item_selector(type_collector):
             types_list.append(TypeSelector(item))
             button_name = "Select Group Type to Place at Family Locations"
         else:
-            if item.IsActive:
+            if len(item.GetDependentElements(DB.ElementClassFilter(DB.FamilyInstance))) > 0:
                 types_list.append(TypeSelector(item))
                 button_name = "Select Family Type to Use for Group Placement Point"
     select_type = forms.SelectFromList.show(types_list, multiselect=False, button_name=button_name)
