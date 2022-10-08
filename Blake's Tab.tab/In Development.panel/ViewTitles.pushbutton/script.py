@@ -97,12 +97,10 @@ class SetViewLines(Windows.Window):
 
     def save_settings(self, sender, args):
         # read current settings and save them to config
-        pad_start = self.leading_distance.Text
         pad_end = self.tailing_distance.Text
         read_units = self.export_units_cb.SelectedIndex
 
         cfg = script.get_config()
-        cfg.pad_start = pad_start
         cfg.pad_end = pad_end
         cfg.read_units = read_units
         script.save_config()
