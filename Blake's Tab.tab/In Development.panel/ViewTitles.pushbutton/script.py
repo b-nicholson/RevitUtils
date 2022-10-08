@@ -25,6 +25,11 @@ uidoc = __revit__.ActiveUIDocument
 activeView = doc.ActiveView
 app = __revit__.Application
 
+rvt_year = int(app.VersionNumber)
+if rvt_year < 2022:
+    forms.alert("Unfortunately this only works in Revit 2022 and above", exitscript=True)
+
+
 def convert_to_internal_units(length, unit_type):
     # keeping < 2022 functionality for future reference
     rvt_year = int(app.VersionNumber)

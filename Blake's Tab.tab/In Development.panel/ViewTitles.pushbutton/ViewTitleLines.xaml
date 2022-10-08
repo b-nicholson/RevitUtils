@@ -69,7 +69,7 @@
                     </RadioButton>
                 </WrapPanel>
             </GroupBox>
-            <TextBlock Text="This script will automatically size the viewport title line to match the title's bounding box. You may provde an additional distance to extend the line beyond (blue dimension above)." TextWrapping="Wrap" Margin="0,10,0,0"/>
+            <TextBlock Text="This script will automatically size the viewport title line to match the title's bounding box. You may provide an additional distance to extend the line beyond (blue dimension above)." TextWrapping="Wrap" Margin="0,10,0,0"/>
         </DockPanel>
     </DockPanel>
 </Window>
