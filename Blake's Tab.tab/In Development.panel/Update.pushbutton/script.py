@@ -1,4 +1,5 @@
 # -*- coding: UTF-8 -*-
+"""Updates all pyRevit Extensions and Reloads pyRevit"""
 from pyrevit import script
 from pyrevit.loader import sessionmgr
 from pyrevit.loader import sessioninfo
