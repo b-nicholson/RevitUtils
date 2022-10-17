@@ -18,7 +18,7 @@ xamlfile = script.get_bundle_file('ViewTitleLines.xaml')
 import wpf
 
 __title__ = 'Change Viewport\nTitle Length'
-_min_revit_ver__ = 2022
+__min_revit_ver__ = 2022
 
 doc = __revit__.ActiveUIDocument.Document
 uidoc = __revit__.ActiveUIDocument
