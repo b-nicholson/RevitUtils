@@ -19,7 +19,7 @@ def new_doc(doc):
         try:
             warning_colour_str = user_config.swc_timer.get_option("warning_colour", "#FF0000")
         except AttributeError:
-            user_config.add_section(EXEC_PARAMS.command_name, "swc_timer")
+            user_config.add_section("swc_timer")
             warning_colour_str = user_config.swc_timer.get_option("warning_colour", "#FF0000")
 
         warning_colour = make_colour(warning_colour_str)
