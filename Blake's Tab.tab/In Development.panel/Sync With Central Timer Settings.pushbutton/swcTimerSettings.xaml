@@ -1,0 +1,73 @@
+﻿<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Sync with Central Timer Settings" Height="575" Width="425" MinWidth="425" ResizeMode="CanResizeWithGrip" MinHeight="575"
+        Closing="data_window_closing" x:Name="overall_window" SizeChanged="window_size_change">
+    <StackPanel Margin="10">
+        <TextBlock TextWrapping="WrapWithOverflow" Margin="0,0,0,15">
+            This script will gradually change your application ribbon to your specified Warning Colour over your set time between sync events.
+            <LineBreak />
+            <LineBreak />
+            The colour changes will begin at the time you set as "When to Start Reminding you to Sync". Eventually, the application automatically switch over to the Collaborate tab at the time you set in "Maximum Duration Between Syncs",
+            and highlight your specified Highlight Colour.
+            <LineBreak />
+            <LineBreak />
+            You may temporarily disable automatic tab switching by hitting the "snooze" button.
+        </TextBlock>
+        <GroupBox Header="Maximum Duration Between Syncs">
+            <StackPanel>
+                <Label x:Name ="duration_label" Content="10" HorizontalAlignment="Center" FontWeight="Bold"/>
+                <DockPanel Margin="5">
+                <Label Content="10 Minutes"/>
+                <Label Content="120 Minutes" DockPanel.Dock="Right"/>
+                <Slider x:Name="swc_timer" Maximum="120" Minimum="10" SmallChange="5" LargeChange="10" Value="30" TickPlacement="TopLeft" TickFrequency="5" ValueChanged="swc_slider_change" Cursor="Hand"/>
+            </DockPanel>
+            </StackPanel>
+        </GroupBox>
+        <GroupBox Header="When to Start Reminding You to Sync">
+            <StackPanel>
+                <Label x:Name ="nag_label" Content="10" HorizontalAlignment="Center" FontWeight="Bold"/>
+                <DockPanel Margin="5">
+                    <Label Content="1 Minute"/>
+                    <Label Content=" Minutes" DockPanel.Dock="Right" Padding="0,5,5,5"/>
+                    <Label Content="120" DockPanel.Dock="Right" Padding="5,5,0,5" x:Name="nag_value"/>
+                    <Slider x:Name="swc_nag_timer" Maximum="120" Minimum="1" SmallChange="1" LargeChange="10" Value="30" TickPlacement="TopLeft" TickFrequency="5" ValueChanged="nag_slider_change" Cursor="Hand"/>
+                </DockPanel>
+            </StackPanel>
+        </GroupBox>
+        <GroupBox Header="Colour Options" Margin="0,5,0,0">
+            <Grid Margin="5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <Label Grid.Column="0" Grid.Row="0" Content="Warning Colour:" VerticalAlignment="Center"/>
+                <Label Grid.Column="0" Grid.Row="1" Content="Highlight Colour:" VerticalAlignment="Center"/>
+                <Button Grid.Column="1" Grid.Row="0" Margin="5" x:Name="warning_colour"  Background="#FFD43636" Click="click_warning_colour" Cursor="Hand"/>
+                <Button Grid.Column="1" Grid.Row="1" Margin="5" x:Name="highlight_colour"  Background="#FF6AE26A" Click="click_highlight_colour" Cursor="Hand"/>
+            </Grid>
+        </GroupBox>
+        <GroupBox Header="Toggles">
+            <StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="Snooze:" ToolTip="Ya, I dont know if I want to expose this to end users yet."/>
+
+                    <CheckBox x:Name="enabled_button" Content="" VerticalAlignment="Center" IsChecked="False" Checked="clicked_snooze" Unchecked="unchecked_snooze" Cursor="Hand"/>
+                </StackPanel>
+                <StackPanel x:Name="snooze_timer_label" Orientation="Horizontal" Visibility="Collapsed">
+                    <Label Content="Collaborate Tab switching will resume at"/>
+                    <Label x:Name="snooze_timer_display" Content="12:28 PM" FontWeight="Bold"/>
+                </StackPanel>
+                <DockPanel x:Name="snooze_timer_panel" Margin="5" Visibility="Collapsed">
+                    <Label Content="1 Minute"/>
+                    <Label Content="240 Minutes" DockPanel.Dock="Right"/>
+                    <Slider x:Name="snooze_timer" Maximum="240" Minimum="5" SmallChange="5" LargeChange="10" Value="20" TickPlacement="TopLeft" TickFrequency="5" ValueChanged="snooze_slider_change" AutoToolTipPlacement="BottomRight" Cursor="Hand"/>
+                </DockPanel>
+            </StackPanel>
+        </GroupBox>
+        <Button Content="Save Settings" Margin="0,10,0,0" Click="click_save_settings" Cursor="Hand"/>
+    </StackPanel>
+</Window>
