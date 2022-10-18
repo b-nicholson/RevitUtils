@@ -16,7 +16,12 @@ def new_doc(doc):
         # Create variables
         base_colour_str = "#EEEEEE"  # comes from Revit - may need to check future releases
         base_colour = make_colour(base_colour_str)
-        warning_colour_str = user_config.swc_timer.get_option("warning_colour", "#FF0000")
+        try:
+            warning_colour_str = user_config.swc_timer.get_option("warning_colour", "#FF0000")
+        except AttributeError:
+            user_config.add_section(EXEC_PARAMS.command_name, "swc_timer")
+            warning_colour_str = user_config.swc_timer.get_option("warning_colour", "#FF0000")
+
         warning_colour = make_colour(warning_colour_str)
         highlight_colour_str = user_config.swc_timer.get_option("highlight_colour", "#00FF2A")
         highlight_colour = make_colour(highlight_colour_str)
