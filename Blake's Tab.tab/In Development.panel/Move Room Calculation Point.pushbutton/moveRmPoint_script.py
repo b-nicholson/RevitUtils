@@ -2,20 +2,31 @@
 from Autodesk.Revit.DB import FilteredElementCollector, BuiltInCategory, Transaction, SpatialElementBoundaryOptions, \
     AreaVolumeSettings, SpatialElementGeometryCalculator, SpatialElementType, XYZ
 import Autodesk.Revit.DB as DB
-from pyrevit import script
 from math import sqrt
 import time
 import sys
 sys.path.append(r"C:\Program Files (x86)\IronPython 2.7\Lib")
 from Queue import PriorityQueue
 
-doc = __revit__.ActiveUIDocument.Document
 
-nonOperableElements = 0
-nonOperableGroups = []
+import clr
+import os
 
-# Creating collector instance and collecting all the rooms from the model
-room_collector = FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_Rooms).WhereElementIsNotElementType()
+clr.AddReference('System.Windows.Forms')
+clr.AddReference('IronPython.Wpf')
+clr.AddReference('System')
+from pyrevit import script
+from System import Windows, Uri
+from System.Windows.Media.Imaging import BitmapImage
+
+xamlfile = script.get_bundle_file('MoveRoomPoint.xaml')
+
+import wpf
+
+
+
+
+
 
 '''Chain of yoink going on here. Dynamo interpretation taken Genius Loci dynamo package,
 which is based on the mapbox PolyLabel algorithm.
@@ -194,59 +205,92 @@ def polylabel(polygon, precision=1.0, with_distance=False):
         c = Cell(cell.x + h, cell.y + h, h, polygon)
         cell_queue.put((-c.max, time.time(), c))
         num_of_probes += 4
-    return XYZ(best_cell.x, best_cell.y, z)
+    return XYZ(best_cell.x, best_cell.y, 0)
 
 
-# this is a bit of a yoink from Clockwork. In order to find the boundaries of the room,
-# you need to first tell it HOW the room is being calculated.
-calculator = SpatialElementGeometryCalculator(doc)
-options = SpatialElementBoundaryOptions()
-# get boundary location from area computation settings
-boundloc = AreaVolumeSettings.GetAreaVolumeSettings(doc).GetSpatialElementBoundaryLocation(SpatialElementType.Room)
-options.SpatialElementBoundaryLocation = boundloc
+class SetViewLines(Windows.Window):
+    def __init__(self):
+        # Setup UI
+        filename = os.path.join(os.path.dirname(__file__), 'example.png')
+        uri = Uri(filename)
+        wpf.LoadComponent(self, xamlfile)
+        self.example.Source = BitmapImage(uri)
 
-# list of pts used to calculate the polygon pole of inaccessibility.
-# Be careful with list levels for rooms with holes in them.
-pointList = []
-# existing room location points
-roomLocations = []
-# list of rooms with an area (filtered unplaced rooms)
-cleanedRooms = []
+    def target_changed(self, sender, args):
+        pass
 
-for room in room_collector:
-    if room.Area > 0:
-        if room.GroupId == DB.ElementId.InvalidElementId:
-            room_is_editable = True
-        else:
-            group = room.Document.GetElement(room.GroupId)
-            room_is_editable = False
-            nonOperableElements += 1
-            nonOperableGroups.append((group.Id, group.Name))
-        if room_is_editable is True:
-            crv = []
-            cleanedRooms.append(room)
-            roomLocations.append(room.Location.Point)
-            for boundlist in room.GetBoundarySegments(options):
-                for bound in boundlist:
-                    crv.append([bound.GetCurve().GetEndPoint(0).X, bound.GetCurve().GetEndPoint(0).Y])
-                    z = bound.GetCurve().GetEndPoint(0).Z
-            pointList.append(crv)
+    def move_rooms(self, sender, args):
 
-centroids = [polylabel([listPoint]) for listPoint in pointList]
+        doc = __revit__.ActiveUIDocument.Document
+        activeView = doc.ActiveView
 
-t = Transaction(doc, "Move Room Calculation Points")
-t.Start()
+        nonOperableElements = 0
+        nonOperableGroups = []
 
-for (rl, cent, finalrm) in zip(roomLocations, centroids, cleanedRooms):
-    finalrm.Location.Move(cent-rl)
+        if self.active_view_cb.IsChecked:
+            selectorOption = DB.FilteredElementCollector(doc, activeView.Id)
 
-t.Commit()
+        if self.entire_model_cb.IsChecked:
+            selectorOption = DB.FilteredElementCollector(doc)
 
-if len(nonOperableGroups) > 0:
-    output = script.get_output()
-    output.print_md("# Warning!")
-    output.print_md("Unable to edit " + (str(nonOperableElements)) + " rooms since they are in groups. \
-                                                                        Their groups are listed below:")
-    unique_groups = set(nonOperableGroups)
-    for grp in unique_groups:
-        print ("■ " + output.linkify(grp[0]) + " Type Name : " + (grp[1]))
+        # Creating collector instance and collecting all the rooms from the model
+        room_collector = selectorOption.OfCategory(BuiltInCategory.OST_Rooms).WhereElementIsNotElementType()
+
+        # this is a bit of a yoink from Clockwork. In order to find the boundaries of the room,
+        # you need to first tell it HOW the room is being calculated.
+        calculator = SpatialElementGeometryCalculator(doc)
+        options = SpatialElementBoundaryOptions()
+        # get boundary location from area computation settings
+        boundloc = AreaVolumeSettings.GetAreaVolumeSettings(doc).GetSpatialElementBoundaryLocation(
+            SpatialElementType.Room)
+        options.SpatialElementBoundaryLocation = boundloc
+
+        # list of pts used to calculate the polygon pole of inaccessibility.
+        # Be careful with list levels for rooms with holes in them.
+        pointList = []
+        # existing room location points
+        roomLocations = []
+        # list of rooms with an area (filtered unplaced rooms)
+        cleanedRooms = []
+
+        for room in room_collector:
+            if room.Area > 0:
+                if room.GroupId == DB.ElementId.InvalidElementId:
+                    room_is_editable = True
+                else:
+                    group = room.Document.GetElement(room.GroupId)
+                    room_is_editable = False
+                    nonOperableElements += 1
+                    nonOperableGroups.append((group.Id, group.Name))
+                if room_is_editable is True:
+                    crv = []
+                    cleanedRooms.append(room)
+                    roomLocations.append(room.Location.Point)
+                    for boundlist in room.GetBoundarySegments(options):
+                        for bound in boundlist:
+                            crv.append([bound.GetCurve().GetEndPoint(0).X, bound.GetCurve().GetEndPoint(0).Y])
+                            z = bound.GetCurve().GetEndPoint(0).Z
+                    pointList.append(crv)
+
+        centroids = [polylabel([listPoint]) for listPoint in pointList]
+
+        t = Transaction(doc, "Move Room Calculation Points")
+        t.Start()
+
+        for (rl, cent, finalrm) in zip(roomLocations, centroids, cleanedRooms):
+            finalrm.Location.Move(cent - rl)
+
+        t.Commit()
+        self.Close()
+
+        if len(nonOperableGroups) > 0:
+            output = script.get_output()
+            output.print_md("# Warning!")
+            output.print_md("Unable to edit " + (str(nonOperableElements)) + " rooms since they are in groups. \
+                                                                                Their groups are listed below:")
+            unique_groups = set(nonOperableGroups)
+            for grp in unique_groups:
+                print ("■ " + output.linkify(grp[0]) + " Type Name : " + (grp[1]))
+
+
+SetViewLines().ShowDialog()
