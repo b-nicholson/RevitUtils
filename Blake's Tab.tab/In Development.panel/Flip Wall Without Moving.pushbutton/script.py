@@ -77,14 +77,18 @@ if rawSelection is not None:
         .WhereElementIsNotElementType() \
         .ToElements()
 
-    t = DB.Transaction(doc, "Disallow Wall Joins")
-    t.Start()
+    if walls is not None:
+        t = DB.Transaction(doc, "Flip Walls")
+        t.Start()
 
-    for w in walls:
-        location_line = w.get_Parameter(DB.BuiltInParameter.WALL_KEY_REF_PARAM)
-        current_location_line = location_line.AsInteger()
-        location_line.Set(0)
-        w.Flip()
-        location_line.Set(current_location_line)
+        for w in walls:
+            location_line = w.get_Parameter(DB.BuiltInParameter.WALL_KEY_REF_PARAM)
+            current_location_line = location_line.AsInteger()
+            location_line.Set(0)
+            w.Flip()
+            location_line.Set(current_location_line)
 
-    t.Commit()
+        t.Commit()
+    else:
+        forms.alert('Pre-Selection Must Contain Walls', exitscript=True)
+        
