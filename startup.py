@@ -5,3 +5,4 @@ try:
 except AttributeError:
     from SyncTimer.welcome import print_welcome
     print_welcome()
+    user_config.add_section("swc_timer")
