@@ -38,8 +38,8 @@ class SwcTimerSettings(Windows.Window):
         make_collab_tab_active(ribbon)
 
         # Load user configs
-        warn_clr = make_colour(user_config.swc_timer.get_option("warning_colour", "#FFD43636"))
-        high_clr = make_colour(user_config.swc_timer.get_option("highlight_colour", "#FF6AE26A"))
+        warn_clr = make_colour(user_config.swc_timer.get_option("warning_colour", "#FFE78F8F"))
+        high_clr = make_colour(user_config.swc_timer.get_option("highlight_colour", "#FFADEFAD"))
         self.warning_colour.Background = warn_clr
         self.highlight_colour.Background = high_clr
         self.swc_timer.Value = user_config.swc_timer.get_option("duration", 30)
