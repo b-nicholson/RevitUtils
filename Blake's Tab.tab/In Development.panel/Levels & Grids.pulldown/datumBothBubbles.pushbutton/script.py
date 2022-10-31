@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-"""Flips the 2D ends of Levels & Grids"""
+"""Shows bubbles on both ends of Levels & Grids"""
 
-__title__ = 'Flip 2D Datum Ends'
+__title__ = 'Show Both Bubbles'
 
 import Autodesk.Revit.DB as DB
 
@@ -73,7 +73,7 @@ for grid in grid_selector:
             nonOperableGroups.append((group.Id, group.Name))
 
     if grid_is_editable is True:
-        grid.HideBubbleInView(DB.DatumEnds.End0, activeView)
+        grid.ShowBubbleInView(DB.DatumEnds.End0, activeView)
         grid.ShowBubbleInView(DB.DatumEnds.End1, activeView)
 
 
