@@ -55,7 +55,7 @@ nonOperableGroups = []
 
 grid_selector = select_by_new_selection()
 
-t = DB.Transaction(doc, "Flip Datum Bubble")
+t = DB.Transaction(doc, "Show Both Datum Bubbles")
 t.Start()
 for grid in grid_selector:
     grid_is_editable = False
@@ -73,14 +73,9 @@ for grid in grid_selector:
             nonOperableGroups.append((group.Id, group.Name))
 
     if grid_is_editable is True:
-        start_vis = grid.IsBubbleVisibleInView(DB.DatumEnds.End0, activeView)
-        end_vis = grid.IsBubbleVisibleInView(DB.DatumEnds.End1, activeView)
-        if start_vis and not end_vis:
-            grid.HideBubbleInView(DB.DatumEnds.End0, activeView)
-            grid.ShowBubbleInView(DB.DatumEnds.End1, activeView)
-        if end_vis and not start_vis:
-            grid.HideBubbleInView(DB.DatumEnds.End1, activeView)
-            grid.ShowBubbleInView(DB.DatumEnds.End0, activeView)
+        grid.HideBubbleInView(DB.DatumEnds.End0, activeView)
+        grid.ShowBubbleInView(DB.DatumEnds.End1, activeView)
+
 
 t.Commit()
 
