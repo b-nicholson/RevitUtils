@@ -82,28 +82,34 @@ def ui_change(doc):
 
             # this controls the annoyance piece when the user exceeds maximum time values but nothing else has changed
             # only force auto tab switching if it is not turned off
-            if last_tab_colour == new_tab_colour and doc == last_doc:
-                if minutes > duration:
-                    change_collab_tab_colour(ribbon, highlight_colour)
-                    if not nag_disabled:
-                        make_collab_tab_active(ribbon)
 
-            else:
-                # if something has, or needs to change, we then trigger ribbon colour changes
-                # change ui colours back to default
-                if new_tab_colour == base_colour:
-                    change_ribbon_colours(ribbon, base_colour)
-
-                # change ui colours to new value based on where we are in the time range, force auto tab switching
-                else:
-                    change_ribbon_colours(ribbon, new_tab_colour)
+            # had to add try for a weird bug about the object being deleted or something
+            try:
+                if last_tab_colour == new_tab_colour and doc == last_doc:
                     if minutes > duration:
                         change_collab_tab_colour(ribbon, highlight_colour)
                         if not nag_disabled:
                             make_collab_tab_active(ribbon)
 
-                # record the last colour we set so we can compare the next run
-                envvars.set_pyrevit_env_var(env_var_last_colour_name, new_tab_colour)
+                else:
+                    # if something has, or needs to change, we then trigger ribbon colour changes
+                    # change ui colours back to default
+                    if new_tab_colour == base_colour:
+                        change_ribbon_colours(ribbon, base_colour)
+
+                    # change ui colours to new value based on where we are in the time range, force auto tab switching
+                    else:
+                        change_ribbon_colours(ribbon, new_tab_colour)
+                        if minutes > duration:
+                            change_collab_tab_colour(ribbon, highlight_colour)
+                            if not nag_disabled:
+                                make_collab_tab_active(ribbon)
+
+                    # record the last colour we set so we can compare the next run
+                    envvars.set_pyrevit_env_var(env_var_last_colour_name, new_tab_colour)
+            # had to add try for a weird bug about the object being deleted or something
+            except:
+                pass
 
         # if the UI has been coloured previously, reset the UI to default if the project is not workshared
         else:
