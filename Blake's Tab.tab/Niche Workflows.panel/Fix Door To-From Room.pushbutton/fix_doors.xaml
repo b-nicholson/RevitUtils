@@ -1,0 +1,80 @@
+<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Name="window"
+        Title="Fix Door Schedule To/From Room" MaxHeight="1000" MaxWidth="1800" ShowInTaskbar="True" Width="500" 
+        WindowStartupLocation="CenterScreen" Top="25" Left="100" SizeToContent="Height" HorizontalContentAlignment="Center" ResizeMode="CanResizeWithGrip">
+
+    <StackPanel>
+        <StackPanel Orientation="Horizontal">
+            <Label Content="Phase:"/>
+            <ComboBox x:Name="cb_phases" ItemsSource="{Binding}" DisplayMemberPath="Name" SelectedValuePath="Name" SelectedValue="{Binding Name}" IsReadOnly="True"/>
+        </StackPanel>
+        <GroupBox Header="Change Location" DockPanel.Dock="Bottom" Margin="0,10,0,0">
+            <WrapPanel>
+
+                <RadioButton x:Name="active_view_cx"
+                                GroupName="reporting_level"
+                                Margin="10,10,0,10"
+                                IsChecked="True"
+                                >
+                    Active View
+                </RadioButton>
+                <RadioButton x:Name="selection_cx"
+                                GroupName="reporting_level"
+                                Margin="10,10,0,10"
+                                IsChecked="False"
+                                >
+                    Selected Doors
+                </RadioButton>
+                <RadioButton x:Name="entire_model_cx"
+                                GroupName="reporting_level"
+                                Margin="10,10,0,10"
+                                IsChecked="False"
+                                >
+                    Entire Model
+                </RadioButton>
+            </WrapPanel>
+        </GroupBox>
+        <GroupBox Header="Room Combinations with Intentionally Reversed To/From">
+            <StackPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <Button Content="+" Width="50" Click="click_add"/>
+                    <Button Content="-" Width="50" Click="click_remove"/>
+                </StackPanel>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+
+                    <DataGrid Name="datagrid" AutoGenerateColumns="False" Margin="10"  Grid.Column="0" Grid.Row="0">
+                <DataGrid.Columns>
+                    <DataGridTemplateColumn Header="Room Name 1" SortMemberPath="rm_1" x:Name="rm_1_col" Width="*">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBox VerticalContentAlignment="Center" HorizontalAlignment="Left" Text="{Binding rm_1, NotifyOnSourceUpdated=True, UpdateSourceTrigger=LostFocus}" SourceUpdated="target_updated"  Width="{Binding ElementName=rm_1_col,Path=ActualWidth}"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="Room Name 2" SortMemberPath="rm_2" x:Name="rm_2_col" Width="*">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBox VerticalAlignment="Center" HorizontalAlignment="Left" Text="{Binding rm_2, NotifyOnSourceUpdated=True, UpdateSourceTrigger=LostFocus}" SourceUpdated="target_updated"  Width="{Binding ElementName=rm_2_col,Path=ActualWidth}"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
+                </DataGrid.Columns>
+            </DataGrid>
+                </Grid>
+            </StackPanel>
+        </GroupBox>
+        <GroupBox Header="Status Output Options">
+            <CheckBox x:Name="cx_fail_only" Content="Only Output failure messages"/>
+        </GroupBox>
+        <Button Content="Run" Click="update_doors"/>
+    </StackPanel>
+    
+</Window>
