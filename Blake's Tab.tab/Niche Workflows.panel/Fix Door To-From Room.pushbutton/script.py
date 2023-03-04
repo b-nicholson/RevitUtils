@@ -72,6 +72,14 @@ class SettingsWindow(WPFWindow):
     def phase(self):
         return self.cb_phases.SelectedItem
 
+    @property
+    def is_built_backwards(self):
+        return self.backwards_cx.IsChecked
+
+    @property
+    def are_built_inconsistently(self):
+        return self.inconsistent_cx.IsChecked
+
     def setup_datagrid(self):
         self.data_grid_content = ObservableCollection[object]()
         self.datagrid.ItemsSource = self.data_grid_content
@@ -185,16 +193,26 @@ class SettingsWindow(WPFWindow):
         for a, b in zip(name_1, name_2):
             combo_list_1.append((a, b))
 
-        t = DB.Transaction(doc, "Fix Door To / From")
+        t = DB.Transaction(doc, "Fix Door To/From")
         t.Start()
 
         for door in doors:
-
             loco = door.GetTransform().Origin
 
-            orientation = door.FacingOrientation * 1.5 + DB.XYZ(0, 0, 1)
+            orientation_vector = door.FacingOrientation * 1.5 + DB.XYZ(0, 0, 1)
 
-            facing_pt = loco + orientation
+            if self.are_built_inconsistently:
+                bbox = door.get_BoundingBox(activeView)
+                facing_pt = (bbox.Min + bbox.Max) / 2
+                orientation_vector = (facing_pt-loco).Normalize()
+
+            if self.is_built_backwards:
+                orientation_vector = door.FacingOrientation.Negate() * 1.5 + DB.XYZ(0, 0, 1)
+
+
+
+
+            facing_pt = loco + orientation_vector
 
             actual_to_room = DB.Document.GetRoomAtPoint(doc, facing_pt, phase)
             if actual_to_room is not None:

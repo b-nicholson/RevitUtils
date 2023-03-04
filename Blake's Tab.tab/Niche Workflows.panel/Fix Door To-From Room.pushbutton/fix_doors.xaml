@@ -3,15 +3,16 @@
         x:Name="window"
         Title="Fix Door Schedule To/From Room" MaxHeight="1000" MaxWidth="1800" ShowInTaskbar="True" Width="500" 
         WindowStartupLocation="CenterScreen" Top="25" Left="100" SizeToContent="Height" HorizontalContentAlignment="Center" ResizeMode="CanResizeWithGrip">
+    
 
     <StackPanel>
+        <Button/>
         <StackPanel Orientation="Horizontal">
             <Label Content="Phase:"/>
             <ComboBox x:Name="cb_phases" ItemsSource="{Binding}" DisplayMemberPath="Name" SelectedValuePath="Name" SelectedValue="{Binding Name}" IsReadOnly="True"/>
         </StackPanel>
         <GroupBox Header="Change Location" DockPanel.Dock="Bottom" Margin="0,10,0,0">
             <WrapPanel>
-
                 <RadioButton x:Name="active_view_cx"
                                 GroupName="reporting_level"
                                 Margin="10,10,0,10"
@@ -70,6 +71,32 @@
             </DataGrid>
                 </Grid>
             </StackPanel>
+        </GroupBox>
+        <GroupBox Header="Revit Door Family Quality" Margin="0,10,0,0">
+            <WrapPanel>
+                <RadioButton x:Name="typical_cx"
+                                GroupName="model_quality"
+                                Margin="10,10,0,10"
+                                IsChecked="True"
+                                >
+                    Typical
+                </RadioButton>
+                <RadioButton x:Name="backwards_cx"
+                                GroupName="model_quality"
+                                Margin="10,10,0,10"
+                                IsChecked="False"
+                                ToolTip="Use when the tool makes your To/From room consistently backwards"
+                                >
+                    Built Backwards
+                </RadioButton>
+                <CheckBox x:Name="inconsistent_cx"
+                                Margin="10,10,0,10"
+                                IsChecked="False"
+                                ToolTip="Use when the results are seemingly random. Will run slower, and will fail if the centre of the door's bounding box does not land in the To Room"
+                                >
+                    Inconsistent
+                </CheckBox>
+            </WrapPanel>
         </GroupBox>
         <GroupBox Header="Status Output Options">
             <CheckBox x:Name="cx_fail_only" Content="Only Output failure messages"/>
