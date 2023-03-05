@@ -80,6 +80,10 @@ class SettingsWindow(WPFWindow):
     def are_built_inconsistently(self):
         return self.inconsistent_cx.IsChecked
 
+    @property
+    def report_only(self):
+        return self.cx_report_only.IsChecked
+
     def setup_datagrid(self):
         self.data_grid_content = ObservableCollection[object]()
         self.datagrid.ItemsSource = self.data_grid_content
@@ -276,14 +280,16 @@ class SettingsWindow(WPFWindow):
                     print (output.linkify(door.Id) + "" + dr_num + " Door only has same to/from room")
 
                 elif is_an_oddball and actual_to_room_id != from_room_id:
-                    door.FlipFromToRoom()
+                    if not self.report_only:
+                        door.FlipFromToRoom()
                     if not message_settings:
                         print (output.linkify(door.Id) + "" + dr_num + " Successfully changed as per oddball condition")
 
 
                 elif actual_to_room_id != to_room_id and not is_an_oddball:
                     # print (door.get_Parameter(DB.BuiltInParameter.ALL_MODEL_MARK).AsString())
-                    door.FlipFromToRoom()
+                    if not self.report_only:
+                        door.FlipFromToRoom()
                     if not message_settings:
                         print (output.linkify(door.Id) + "" + dr_num + " Successfully changed")
                 elif not message_settings:

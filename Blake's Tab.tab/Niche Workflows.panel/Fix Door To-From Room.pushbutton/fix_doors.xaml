@@ -98,8 +98,11 @@
                 </CheckBox>
             </WrapPanel>
         </GroupBox>
-        <GroupBox Header="Status Output Options">
-            <CheckBox x:Name="cx_fail_only" Content="Only Output failure messages"/>
+        <GroupBox Header="Options">
+            <StackPanel>
+            <CheckBox x:Name="cx_fail_only" Content="Report will only output failure messages"/>
+            <CheckBox x:Name="cx_report_only" Content="Only generate a report, do not change model"/>
+            </StackPanel>
         </GroupBox>
         <Button Content="Run" Click="update_doors"/>
     </StackPanel>
