@@ -1,0 +1,172 @@
+<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Name="window"
+        Title="Coordinate Elements on Typical Floors" MaxHeight="1000" MaxWidth="1800" ShowInTaskbar="True" Width="700" 
+        WindowStartupLocation="CenterScreen" Top="25" Left="100" SizeToContent="Height" HorizontalContentAlignment="Center" ResizeMode="CanResizeWithGrip">
+    <Window.Resources>
+        <Style TargetType="TextBlock" x:Key="guide_info">
+            <Setter Property="Margin" Value="10,15,0,0"/>
+        </Style>
+        <Style TargetType="CheckBox" x:Key="options">
+            <Setter Property="Margin" Value="0,0,0,5"/>
+        </Style>
+
+    </Window.Resources>
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+    <StackPanel Margin="15">
+        <Expander Header="Guide">
+            <StackPanel>
+                    <TextBlock TextWrapping="WrapWithOverflow" Margin="0,20,0,0"><Run Text="This tool has 2 primary functions for typical floors. Firstly, it modifies &amp; applies numbering conventions to typical floor rooms &amp; doors by finding/replacing key values. Second, it can copy parameters between "/><Run Language="en-ca" Text="elements"/><Run Text="."/></TextBlock>
+                    <TextBlock TextWrapping="WrapWithOverflow" Style="{StaticResource guide_info}"><Run Text="1. Specify the "/><Run FontStyle="Italic" Text="target category"/><Run Text=" you wish to modify."/></TextBlock>
+                    <TextBlock TextWrapping="WrapWithOverflow" Style="{StaticResource guide_info}"><Run Text="2. Specify the "/><Run FontStyle="Italic" Text="Source or 'Parent' Level"/><Run Text=" which will have its values copied to other floors."/></TextBlock>
+                    <TextBlock TextWrapping="WrapWithOverflow" Style="{StaticResource guide_info}"><Run Text="3. Input the numbering convention used to generate your numbering on that floor in "/><Run FontStyle="Italic" Text="Pattern to Find"/><Run Text=". Variables can be enclosed in curly braces { }. If no curly braces are found, it will do a simple find/replace, but it will only replace the first occurrence of the item reading left to right."/></TextBlock>
+                    <TextBlock Text="e.g. 1-NW-001a could be represented as: {level}-{sector}-{number}, or alternatively, more simply as: 1{number} " TextWrapping="WrapWithOverflow" Style="{StaticResource guide_info}"/>
+                    <TextBlock TextWrapping="WrapWithOverflow" Style="{StaticResource guide_info}"><Run Text="4. The "/><Run FontStyle="Italic" Text="Preview"/><Run Text=" section allows you to preview how the numbering system will work with existing elements in your model. You may select a sample item, and provide a sample pattern to apply as if it were on another floor."/></TextBlock>
+                    <TextBlock TextWrapping="WrapWithOverflow" Style="{StaticResource guide_info}"><Run Text="e.g. Using the example above, we could use a "/><Run Text="New Pattern"/><Run Text=" such as: 2-{sector}-{number} or more simply as 2{number}. For subsequent floors, we would use 3-{sector}-{number} or 3{number} etc."/></TextBlock>
+                    <TextBlock TextWrapping="WrapWithOverflow" Style="{StaticResource guide_info}"><Run Text="The sample original value and the new, modified sample value will be displayed below. Anything inputted in the "/><Run FontStyle="Italic" Text="Preview"/><Run Text=" section will not be applied to the model. It is for reference purposes only."/></TextBlock>
+                    <TextBlock TextWrapping="WrapWithOverflow" Style="{StaticResource guide_info}"><Run Text="5. In the "/><Run FontStyle="Italic" Text="Target Levels"/><Run Text=" grid, hit the checkbox to indicate that you wish to modify that level's elements. Input your naming pattern that you developed previously into the "/><Run FontStyle="Italic" Text="Replace Pattern With"/><Run Text=" column. Modify your naming to be unique to that level."/></TextBlock>
+
+
+                </StackPanel>
+            
+        </Expander>
+        <GroupBox Header="Target Category">
+            <ComboBox x:Name="cb_category"  ItemsSource="{Binding}" DisplayMemberPath="Name" SelectedValuePath="Name" IsReadOnly="True" SelectionChanged="src_changed" Margin="10"/>
+        </GroupBox>
+        <GroupBox Header="Source Information">
+            <Grid Margin="10">
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Label Content="Source Level Name" Grid.Column="0" Grid.Row="0" HorizontalContentAlignment="Center"/>
+                <Label Content="Pattern to Find" Grid.Column="1" Grid.Row="0" HorizontalContentAlignment="Center"/>
+
+                <ComboBox x:Name="cb_source_level" ItemsSource="{Binding}" DisplayMemberPath="Name" SelectedValuePath="Name" SelectedValue="{Binding Name}" IsReadOnly="True" Grid.Column="0" Grid.Row="1" SelectionChanged="src_changed"/>
+                <TextBox x:Name="id_source" Grid.Column="1" Grid.Row="1"  TextChanged="on_format_change"/>
+
+
+
+            </Grid>
+        </GroupBox>
+
+            <Expander Header="Preview">
+
+
+                <Grid Margin="10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.Row="0" Grid.ColumnSpan="2" TextWrapping="WrapWithOverflow" FontSize="11" FontStyle="Italic" Margin="0,5,0,5" Text="Nothing in this section will change things in your model - its sole purpose is to help you create the find/replace pattern that works for your naming convention. You will use this info in the target section below."/>
+
+                    <Label Content="Preview Element" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Center"/>
+                    <ComboBox x:Name="cb_sample_item" Grid.Column="0" Grid.Row="2" ItemsSource="{Binding}" DisplayMemberPath="item_value" IsReadOnly="True" SelectionChanged="sample_changed"/>
+
+                    <Label Content="New Preview Pattern" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Center" />
+                    <TextBox x:Name="new_format_tb" Grid.Column="1" Grid.Row="2" TextChanged="on_format_change"/>
+
+                    <Label Content="Sample Original Number" Grid.Column="0" Grid.Row="3" HorizontalAlignment="Center"/>
+                    <Label Content="Sample New Number" Grid.Column="1" Grid.Row="3" HorizontalContentAlignment="Center"/>
+
+                    <TextBox x:Name="tb_og_number" Grid.Column="0" Grid.Row="4" IsReadOnly="True" HorizontalContentAlignment="Center" Cursor="Arrow"/>
+                    <TextBox  x:Name="tb_new_number" Grid.Column="1" Grid.Row="4" IsReadOnly="True" HorizontalContentAlignment="Center" Cursor="Arrow"/>
+
+                </Grid>
+            </Expander>
+
+            <GroupBox Header="Target Levels">
+            <DataGrid Name="datagrid" AutoGenerateColumns="False" Margin="10">
+                <DataGrid.Columns>
+                    <DataGridTemplateColumn Header="Target Level?" SortMemberPath="inclusion">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <CheckBox VerticalAlignment="Center" HorizontalAlignment="Left" IsChecked="{Binding inclusion, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Cursor="Hand"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="Level Name" SortMemberPath="level_name">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Label VerticalAlignment="Center" HorizontalAlignment="Left" Content="{Binding level_name, NotifyOnSourceUpdated=True, UpdateSourceTrigger=LostFocus}" SourceUpdated="target_updated"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn x:Name="id_column" Header="Replace Pattern With" SortMemberPath="level_identifier" Width="150">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBox VerticalAlignment="Center" HorizontalAlignment="Left" Text="{Binding level_identifier, NotifyOnSourceUpdated=True, UpdateSourceTrigger=LostFocus}" SourceUpdated="target_updated" Width="{Binding ElementName=id_column,Path=ActualWidth}" TextChanged="cell_updated"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn x:Name="level_elev_header" Header="Level Elevation" SortMemberPath="level_elevation" SortDirection="Ascending" Width="*">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Label VerticalAlignment="Center" HorizontalAlignment="Left" Content="{Binding level_elevation, NotifyOnSourceUpdated=True, UpdateSourceTrigger=LostFocus}" SourceUpdated="target_updated"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+        </GroupBox>
+        <GroupBox Header="Options">
+            <StackPanel Margin="10">
+                    <CheckBox x:Name="cx_phases" Content="Project Uses Phases" Width="250" HorizontalAlignment="Left" Checked="phases_changed" Unchecked="phases_changed" Style="{StaticResource options}"/>
+                    <StackPanel x:Name="phase_dialog" Orientation="Horizontal" Margin="20,0,0,0" Visibility="Collapsed">
+                        <Label Content="Phase to Target:"/>
+                        <ComboBox x:Name="cb_phases" ItemsSource="{Binding}" DisplayMemberPath="Name" SelectedValuePath="Name" SelectedValue="{Binding Name}" IsReadOnly="True"/>
+                        <CheckBox x:Name="cx_existing_items" Content="Target Existing elements that are not already demolished" VerticalContentAlignment="Center" Margin="10,0,0,0" IsChecked="True"/>
+                    </StackPanel>
+                    <CheckBox x:Name="cx_match_properties" Content="Match Instance Properties (Except Number / Mark)" Width="300" HorizontalAlignment="Left" Checked="match_prop_changed" Unchecked="match_prop_changed" Style="{StaticResource options}"/>
+                    <CheckBox x:Name="cx_move_target" Content="Move Target Item Locations to Source Location" ToolTip="If the target is not in the same place as the source, it will try to coordinate the target. Items in Groups / nested items (like curtain panels) won't work"  Width="275" HorizontalAlignment="Left" Style="{StaticResource options}"/>
+                    <CheckBox x:Name="cx_match_rm_name" Content="Only Modify Rooms With Identical Names" Width="250" HorizontalAlignment="Left" Style="{StaticResource options}"/>
+                    <CheckBox x:Name="cx_match_dr_fam" Content="Only Modify Doors With The Same Family Name" Width="280" HorizontalAlignment="Left" Style="{StaticResource options}"/>
+                    <CheckBox x:Name="cx_match_dr_type" Content="Only Modify Doors With The Same Type Name" Width="280" HorizontalAlignment="Left" Style="{StaticResource options}"/>
+
+                    <Label x:Name="door_locations_label" Content="Tolerance Between Door Locations:"/>
+                <StackPanel x:Name="distance_options" Orientation="Horizontal" ToolTip="Set the maximum allowable distance between doors" Margin="5,0,0,0">
+                    <Label Content="0"/>
+                    <Slider x:Name="slider" Maximum="{Binding ElementName=max, Path=Text, UpdateSourceTrigger=PropertyChanged}" Width="180" VerticalAlignment="Center" IsSnapToTickEnabled="True" Value="5"/>
+                    <TextBox Text="{Binding ElementName=slider, Path=Value, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center" MinWidth="35"/>
+                    <Label Content="Max:" Margin="5,0,0,0"/>
+                        <TextBox x:Name="max" Text="600" VerticalAlignment="Center"  MinWidth="35"/>
+                    <Label Content="Units:" Margin="5,0,0,0"/>
+                    <ComboBox x:Name="export_units_cb"
+                          DockPanel.Dock="Right"
+                          VerticalContentAlignment="Center"
+                          Width="60" Margin="0,3,0,3"/>
+                </StackPanel>
+                    <Expander x:Name="expander_scary" Header="Advanced Options" Visibility="Collapsed">
+                        <StackPanel>
+                            <TextBlock TextWrapping="WrapWithOverflow" Margin="30,10,0,10">
+                                Honestly, don't check this unless you have a very specific reason to. Some parameters exposed in this section will change model geometry and potentially break things. Use at your own risk, be delibrate in your selections, and check your model after.
+                            </TextBlock>
+                        <CheckBox x:Name="cx_scary_options" Content="Enable Modification of Known Scary Parameters"  HorizontalAlignment="Left"/>
+                        </StackPanel>
+                    </Expander>
+            </StackPanel>
+
+
+        </GroupBox>
+            <Button Content="Run" Click="click_run" Margin="0,0,0,10"/>
+
+        </StackPanel>
+    </ScrollViewer>
+
+
+
+
+
+</Window>
