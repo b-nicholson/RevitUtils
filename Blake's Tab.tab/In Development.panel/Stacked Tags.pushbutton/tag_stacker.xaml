@@ -1,0 +1,31 @@
+<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Stacked Tag Creation Settings"
+        SizeToContent="Height"
+        Width="350" Height="125"
+        MinWidth="350" MinHeight="125"
+        ResizeMode="CanResizeWithGrip"
+        ShowInTaskbar="True"
+        WindowStartupLocation="CenterScreen"
+        UseLayoutRounding="True"
+        HorizontalContentAlignment="Center">
+    <StackPanel Margin="10
+                ">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width ="0.125*"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <CheckBox x:Name="cx_leader" Grid.Column="0" Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Center" IsChecked="True"/>
+            <Label Content="Tag Stack Has a Leader" Grid.Column="1" Grid.Row="0"/>
+            <CheckBox x:Name="cx_leader_attached" Grid.Column="0" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center" IsChecked="True"/>
+            <Label Content="Leader is Attached by Default" Grid.Column="1" Grid.Row="1"/>
+            
+        </Grid>
+        <Button Content="Save Settings" Click="save_settings" Margin="0,10,0,0"/>
+    </StackPanel>
+</Window>
