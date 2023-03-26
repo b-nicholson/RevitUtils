@@ -44,7 +44,7 @@
                     </RadioButton>
                 </WrapPanel>
             </GroupBox>
-            <TextBlock Text="This script moves the room's location point to its pole of inaccessibility. This is the point in the polygon where you can draw the largest possible circle within the boundaries. It is NOT the centroid, and as such may have unexpected results, particularly for irregular shapes. However, unlike centroids, it will always provide a valid solution." TextWrapping="Wrap" Margin="0,10,0,0"/>
+            <TextBlock Text="!!I need to rewrite this - it doesn't quite work right!! This script moves the room's location point to its pole of inaccessibility. This is the point in the polygon where you can draw the largest possible circle within the boundaries. It is NOT the centroid, and as such may have unexpected results, particularly for irregular shapes. However, unlike centroids, it will always provide a valid solution." TextWrapping="Wrap" Margin="0,10,0,0"/>
         </DockPanel>
     </DockPanel>
 </Window>
