@@ -7,8 +7,8 @@
             This script will gradually change your application ribbon to your specified Warning Colour over your set time between sync events.
             <LineBreak />
             <LineBreak />
-            The colour changes will begin at the time you set as "When to Start Reminding you to Sync". Eventually, the application automatically switch over to the Collaborate tab at the time you set in "Maximum Duration Between Syncs",
-            and highlight your specified Highlight Colour.
+            The colour changes will begin at the time you set as "When to Start Reminding you to Sync". Eventually, the application automatically switches over to the Collaborate tab at the time you set in "Maximum Duration Between Syncs",
+            and highlights with your specified Highlight Colour.
             <LineBreak />
             <LineBreak />
             You may temporarily disable automatic tab switching by hitting the "snooze" button.
