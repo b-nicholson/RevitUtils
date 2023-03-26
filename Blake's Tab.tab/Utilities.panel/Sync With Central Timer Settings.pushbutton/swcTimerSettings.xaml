@@ -17,7 +17,7 @@
             <StackPanel>
                 <Label x:Name ="duration_label" Content="10" HorizontalAlignment="Center" FontWeight="Bold"/>
                 <DockPanel Margin="5">
-                <Label Content="10 Minutes"/>
+                <Label Content="30 Minutes"/>
                 <Label Content="120 Minutes" DockPanel.Dock="Right"/>
                 <Slider x:Name="swc_timer" Maximum="120" Minimum="10" SmallChange="5" LargeChange="10" Value="30" TickPlacement="TopLeft" TickFrequency="5" ValueChanged="swc_slider_change" Cursor="Hand"/>
             </DockPanel>
@@ -29,8 +29,8 @@
                 <DockPanel Margin="5">
                     <Label Content="1 Minute"/>
                     <Label Content=" Minutes" DockPanel.Dock="Right" Padding="0,5,5,5"/>
-                    <Label Content="120" DockPanel.Dock="Right" Padding="5,5,0,5" x:Name="nag_value"/>
-                    <Slider x:Name="swc_nag_timer" Maximum="120" Minimum="1" SmallChange="1" LargeChange="10" Value="30" TickPlacement="TopLeft" TickFrequency="5" ValueChanged="nag_slider_change" Cursor="Hand"/>
+                    <Label Content="29" DockPanel.Dock="Right" Padding="5,5,0,5" x:Name="nag_value"/>
+                    <Slider x:Name="swc_nag_timer" Maximum="29" Minimum="1" SmallChange="1" LargeChange="10" Value="30" TickPlacement="TopLeft" TickFrequency="5" ValueChanged="nag_slider_change" Cursor="Hand"/>
                 </DockPanel>
             </StackPanel>
         </GroupBox>
