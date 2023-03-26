@@ -143,10 +143,20 @@ def active_view_is_section_view():
     else:
         return False
 
+
+if activeView.Category.Id == DB.ElementId(DB.BuiltInCategory.OST_Sheets):
+    forms.alert("Active View Cannot Be a Sheet. Try a model view", exitscript=True)
+
+if type(activeView) is DB.ViewDrafting:
+    forms.alert("Drafting Views are weird. Contact me if you need this functionality.", exitscript=True)
+
 selection = select_from_hostdoc_or_link()
 
+if len(selection) is 0:
+    forms.alert("Nothing Selected.", exitscript=True)
+
 with forms.WarningBar(title='Pick Location to Place the Tag Stack'):
-    if activeView.SketchPlane is None:
+    if activeView.SketchPlane is None and type(activeView) is not DB.ViewDrafting:
         t_temp = DB.Transaction(doc, "TempSketchPlane")
         t_temp.Start()
         sketch_plane = DB.SketchPlane.Create(doc, DB.Plane.CreateByNormalAndOrigin(activeView.ViewDirection, activeView.Origin))
