@@ -31,5 +31,6 @@ def print_welcome():
     <ul>\
         <li>I dont know about you, but I misclick this a lot. No idea who thought having it beside Edit Group in the UI was a good idea. Not noticing it was accidentally ungrouped has bad consequences. The plugin will give you a warning before ungrouping.</li>\
     </ul>\
+    <p><strong>To make this pop-up stop appearing, Enter the Sync with Central Timer Settings and save your desired configuration.</strong> (This is deliberately obnoxious, sorry)</p>\
     <p>&nbsp;</p>\
     ")

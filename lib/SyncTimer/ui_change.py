@@ -8,8 +8,12 @@ def ui_change(doc):
     from pyrevit import clr
     from pyrevit.coreutils import envvars
     from datetime import datetime
+
+
+
     # Custom module for this system
     from SyncTimer.swc_timer import change_ribbon_colours, make_collab_tab_active, change_collab_tab_colour, make_times
+
 
     '''for use with doc changed event'''
     doc_id = str(doc.GetHashCode())
@@ -41,7 +45,14 @@ def ui_change(doc):
             highlight_colour = envvars.get_pyrevit_env_var("highlight_colour")
             history_datetime = envvars.get_pyrevit_env_var(env_var_timer_name)
             last_tab_colour = envvars.get_pyrevit_env_var(env_var_last_colour_name)
-            duration = int(envvars.get_pyrevit_env_var(env_var_last_duration_name))  # requires int sanitation
+            try:
+                duration = int(envvars.get_pyrevit_env_var(env_var_last_duration_name))  # requires int sanitation
+            except:
+                # Microsoft.Scripting.ArguementTypeException when opened doc is made to be workshared
+                from SyncTimer.new_doc import new_doc
+                new_doc(doc)
+                duration = int(envvars.get_pyrevit_env_var(env_var_last_duration_name))  # requires int sanitation
+
             nag_time = int(envvars.get_pyrevit_env_var(env_var_nag_time_name))       # requires int sanitation
             nag_disabled = envvars.get_pyrevit_env_var("nag_enabled")
 
@@ -62,8 +73,11 @@ def ui_change(doc):
 
             # find how long it has been since the user has synced in minutes
             now = datetime.now()
-            difference = now - history_datetime
-            minutes = difference.total_seconds() / 60
+            if history_datetime is None:
+                minutes = 0
+            else:
+                difference = now - history_datetime
+                minutes = difference.total_seconds() / 60
 
             # reset automatic tab switching if timer has expired
             if nag_disabled_timer is None:
