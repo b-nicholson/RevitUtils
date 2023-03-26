@@ -15,7 +15,7 @@
         </TextBlock>
         <GroupBox Header="Maximum Duration Between Syncs">
             <StackPanel>
-                <Label x:Name ="duration_label" Content="10" HorizontalAlignment="Center" FontWeight="Bold"/>
+                <Label x:Name ="duration_label" Content="30" HorizontalAlignment="Center" FontWeight="Bold"/>
                 <DockPanel Margin="5">
                 <Label Content="30 Minutes"/>
                 <Label Content="120 Minutes" DockPanel.Dock="Right"/>
