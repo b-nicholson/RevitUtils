@@ -1,10 +1,7 @@
-'''
-To Do:
+__title__ = 'Coordinate\nTypical Floors'
 
-1. eliminate redundancy with room/door methods being directly split + modified slightly
-2. allow other categories? Will need to remove a lot of hard coding
 
-'''
+
 
 import Autodesk.Revit.DB as DB
 import os as os
@@ -818,3 +815,10 @@ class SettingsWindow(WPFWindow):
 
 
 SettingsWindow().ShowDialog()
+'''
+To Do:
+
+1. eliminate redundancy with room/door methods being directly split + modified slightly
+2. allow other categories? Will need to remove a lot of hard coding
+
+'''

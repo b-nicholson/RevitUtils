@@ -161,13 +161,21 @@ with forms.WarningBar(title='Pick Location to Place the Tag Stack'):
         t_temp.Start()
         sketch_plane = DB.SketchPlane.Create(doc, DB.Plane.CreateByNormalAndOrigin(activeView.ViewDirection, activeView.Origin))
         activeView.SketchPlane = sketch_plane
-        point = uidoc.Selection.PickPoint()
+        try:
+            point = uidoc.Selection.PickPoint()
+        except Exceptions.InvalidOperationException:
+            t_temp.RollBack()
+            import sys
+            sys.exit()
         t_temp.RollBack()
     else:
         try:
             point = uidoc.Selection.PickPoint()
         except Exceptions.OperationCanceledException:
             forms.alert("Cancelled", exitscript=True)
+        except Exceptions.InvalidOperationException:
+            import sys
+            sys.exit()
 
     stable_point = point
 
