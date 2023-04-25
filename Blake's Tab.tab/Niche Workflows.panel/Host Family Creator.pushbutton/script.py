@@ -284,32 +284,33 @@ if len(rawSelection) > 0:
 
 else:
     # if nothing is pre-selected, create new selection, which filters for family instances.
-    with forms.WarningBar(title='Select Families to Add'):
+    # with forms.WarningBar(title='Select Families to Add'):
+    forms.alert('Select Families to Add')
 
-        selectionNew = []
-        selection_completed = False
-        while selection_completed is not True:
-            try:
-                selector = uidoc.Selection.PickObjects(UI.Selection.ObjectType.Element,
-                                                       CustomISelectionFilter())
-                if selector.Count > 0:
-                    selection_completed = True
-                else:
-                    forms.alert("Nothing selected, try again.")
-            except Exceptions.OperationCanceledException:
-                forms.alert('Selection Cancelled. Try again?', yes=True, no=True, exitscript=True)
+    selectionNew = []
+    selection_completed = False
+    while selection_completed is not True:
+        try:
+            selector = uidoc.Selection.PickObjects(UI.Selection.ObjectType.Element,
+                                                   CustomISelectionFilter())
+            if selector.Count > 0:
+                selection_completed = True
+            else:
+                forms.alert("Nothing selected, try again.")
+        except Exceptions.OperationCanceledException:
+            forms.alert('Selection Cancelled. Try again?', yes=True, no=True, exitscript=True)
 
-        for ref in selector:
-            selectionNew.append(DB.Document.GetElement(doc, ref))
-        newSelectionIds = []
-        if len(selectionNew) > 0:
-            for i in selectionNew:
-                newSelectionIds.append(i.Id)
+    for ref in selector:
+        selectionNew.append(DB.Document.GetElement(doc, ref))
+    newSelectionIds = []
+    if len(selectionNew) > 0:
+        for i in selectionNew:
+            newSelectionIds.append(i.Id)
 
-        newSelectionIds = List[DB.ElementId](newSelectionIds)
-        '''add logic to remove in place families'''
-        collector = DB.FilteredElementCollector(doc, newSelectionIds).OfClass(DB.FamilyInstance)\
-            .WhereElementIsNotElementType().ToElements()
+    newSelectionIds = List[DB.ElementId](newSelectionIds)
+    '''add logic to remove in place families'''
+    collector = DB.FilteredElementCollector(doc, newSelectionIds).OfClass(DB.FamilyInstance)\
+        .WhereElementIsNotElementType().ToElements()
 
 
 '''clean this up, it should be smarter than just grabbibng the first instance'''
@@ -351,31 +352,32 @@ except:
                 warn_icon=True, exitscript=True)
 
 
-with forms.WarningBar(title='Pick Insertion Point for the New Host Family'):
-    '''User picks where they want the selected elements to be relative to the host family origin'''
-    if activeView.SketchPlane is None and type(activeView) is not DB.ViewDrafting:
-        t_temp = DB.Transaction(doc, "TempSketchPlane")
-        t_temp.Start()
-        sketch_plane = DB.SketchPlane \
-            .Create(doc, DB.Plane.CreateByNormalAndOrigin(activeView.ViewDirection, activeView.Origin))
-        activeView.SketchPlane = sketch_plane
-        try:
-            point = uidoc.Selection.PickPoint()
-        except Exceptions.InvalidOperationException:
-            t_temp.RollBack()
-            import sys
-            sys.exit()
+# with forms.WarningBar(title='Pick Insertion Point for the New Host Family'):
+forms.alert('Pick Insertion Point for the New Host Family')
+'''User picks where they want the selected elements to be relative to the host family origin'''
+if activeView.SketchPlane is None and type(activeView) is not DB.ViewDrafting:
+    t_temp = DB.Transaction(doc, "TempSketchPlane")
+    t_temp.Start()
+    sketch_plane = DB.SketchPlane \
+        .Create(doc, DB.Plane.CreateByNormalAndOrigin(activeView.ViewDirection, activeView.Origin))
+    activeView.SketchPlane = sketch_plane
+    try:
+        point = uidoc.Selection.PickPoint()
+    except Exceptions.InvalidOperationException:
         t_temp.RollBack()
-    else:
-        try:
-            point = uidoc.Selection.PickPoint()
-        except Exceptions.OperationCanceledException:
-            forms.alert("Cancelled", exitscript=True)
-        except Exceptions.InvalidOperationException:
-            import sys
-            sys.exit()
+        import sys
+        sys.exit()
+    t_temp.RollBack()
+else:
+    try:
+        point = uidoc.Selection.PickPoint()
+    except Exceptions.OperationCanceledException:
+        forms.alert("Cancelled", exitscript=True)
+    except Exceptions.InvalidOperationException:
+        import sys
+        sys.exit()
 
-    insertion_point = point
+insertion_point = point
 
 
 
@@ -525,144 +527,144 @@ class SettingsWindow(WPFWindow):
         max_z = None
 
         max_value = len(collector)
-        with forms.ProgressBar(title='Transferring Family.. ({value} of {max_value})', cancellable=True) as pb:
-            i = 0
-            for elem in collector:
+        # with forms.ProgressBar(title='Transferring Family.. ({value} of {max_value})', cancellable=True) as pb:
+        #     i = 0
+        for elem in collector:
 
-                    geo_boundingbox = elem.get_BoundingBox(None)
-                    geo_min_x = geo_boundingbox.Min.X
-                    geo_min_y = geo_boundingbox.Min.Y
-                    geo_min_z = geo_boundingbox.Min.Z
+                geo_boundingbox = elem.get_BoundingBox(None)
+                geo_min_x = geo_boundingbox.Min.X
+                geo_min_y = geo_boundingbox.Min.Y
+                geo_min_z = geo_boundingbox.Min.Z
 
-                    geo_max_x = geo_boundingbox.Max.X
-                    geo_max_y = geo_boundingbox.Max.Y
-                    geo_max_z = geo_boundingbox.Max.Z
+                geo_max_x = geo_boundingbox.Max.X
+                geo_max_y = geo_boundingbox.Max.Y
+                geo_max_z = geo_boundingbox.Max.Z
 
-                    if min_x is None or geo_min_x < min_x:
-                        min_x = geo_min_x
+                if min_x is None or geo_min_x < min_x:
+                    min_x = geo_min_x
 
-                    if min_y is None or geo_min_y < min_y:
-                        min_y = geo_min_y
+                if min_y is None or geo_min_y < min_y:
+                    min_y = geo_min_y
 
-                    if min_z is None or geo_min_z < min_z:
-                        min_z = geo_min_z
+                if min_z is None or geo_min_z < min_z:
+                    min_z = geo_min_z
 
-                    if max_x is None or geo_max_x > max_x:
-                        max_x = geo_max_x
+                if max_x is None or geo_max_x > max_x:
+                    max_x = geo_max_x
 
-                    if max_y is None or geo_max_x > max_x:
-                        max_y = geo_max_y
+                if max_y is None or geo_max_x > max_x:
+                    max_y = geo_max_y
 
-                    if max_z is None or geo_max_x > max_x:
-                        max_z = geo_max_z
+                if max_z is None or geo_max_x > max_x:
+                    max_z = geo_max_z
 
-                    location = elem.Location
-                    if type(location) == DB.LocationPoint:
-                        fam_relative_location = location.Point
-                        fam_location_in_host = DB.XYZ(fam_relative_location.X - insertion_point.X, fam_relative_location.Y - insertion_point.Y, 0)
-                        load_family(elem, fam_location_in_host, new_family_doc)
-
-
+                location = elem.Location
+                if type(location) == DB.LocationPoint:
+                    fam_relative_location = location.Point
+                    fam_location_in_host = DB.XYZ(fam_relative_location.X - insertion_point.X, fam_relative_location.Y - insertion_point.Y, 0)
+                    load_family(elem, fam_location_in_host, new_family_doc)
 
 
-                    if type(location) == DB.LocationCurve:
-                        '''add curve based elements, currently will just skip it'''
-                        print("Found a line-based family. It will be skipped. Tell Blake to stop being lazy and add that option.")
-                        print("You'll need to add that family manually :(")
-                        print("But i'm serious actually tell me")
-                        print("")
-                        continue
 
-                    if pb.cancelled:
-                        # exit script if user cancels operation with forms.warningbar function
-                        break
-                    else:
-                        # update forms.warningbar UI with progress for every target element
-                        pb.update_progress(i, max_value)
-                    i += 1
 
-            family = new_family_doc.OwnerFamily
-            param = family.get_Parameter(DB.BuiltInParameter.ROOM_CALCULATION_POINT)
-            if param and self.enable_room_calc_pt:
-                with DB.Transaction(new_family_doc, "AddRoomCalcPoint") as t:
-                    t.Start()
-                    param.Set(1)
-                    composite_min_pt = DB.XYZ(min_x, min_y, min_z)
-                    composite_max_pt = DB.XYZ(max_x, max_y, max_z)
+                if type(location) == DB.LocationCurve:
+                    '''add curve based elements, currently will just skip it'''
+                    print("Found a line-based family. It will be skipped. Tell Blake to stop being lazy and add that option.")
+                    print("You'll need to add that family manually :(")
+                    print("But i'm serious actually tell me")
+                    print("")
+                    continue
 
-                    average_bb_mid_pt = (composite_max_pt + composite_min_pt) / 2
-                    room_calc_pt = -(insertion_point - average_bb_mid_pt)
+                # if pb.cancelled:
+                #     # exit script if user cancels operation with forms.warningbar function
+                #     break
+                # else:
+                #     # update forms.warningbar UI with progress for every target element
+                #     pb.update_progress(i, max_value)
+                # i += 1
 
-                    pt = DB.FilteredElementCollector(new_family_doc).OfClass(DB.SpatialElementCalculationPoint)
-                    for p in pt:
-                        p.Position = room_calc_pt
-                    t.Commit()
+        family = new_family_doc.OwnerFamily
+        param = family.get_Parameter(DB.BuiltInParameter.ROOM_CALCULATION_POINT)
+        if param and self.enable_room_calc_pt:
+            with DB.Transaction(new_family_doc, "AddRoomCalcPoint") as t:
+                t.Start()
+                param.Set(1)
+                composite_min_pt = DB.XYZ(min_x, min_y, min_z)
+                composite_max_pt = DB.XYZ(max_x, max_y, max_z)
 
-            path = os.path.join(self.save_dir, self.file_name + ".rfa")
-            try:
+                average_bb_mid_pt = (composite_max_pt + composite_min_pt) / 2
+                room_calc_pt = -(insertion_point - average_bb_mid_pt)
+
+                pt = DB.FilteredElementCollector(new_family_doc).OfClass(DB.SpatialElementCalculationPoint)
+                for p in pt:
+                    p.Position = room_calc_pt
+                t.Commit()
+
+        path = os.path.join(self.save_dir, self.file_name + ".rfa")
+        try:
+            new_family_doc.SaveAs(path)
+        except:
+            overwrite = forms.alert("File Already Exists. Overwrite?", sub_msg=path, yes=True, no=True, exitscript=True)
+            if overwrite:
+                os.remove(path)
                 new_family_doc.SaveAs(path)
-            except:
-                overwrite = forms.alert("File Already Exists. Overwrite?", sub_msg=path, yes=True, no=True, exitscript=True)
-                if overwrite:
-                    os.remove(path)
-                    new_family_doc.SaveAs(path)
-                else:
-                    valid = False
-                    while valid == False:
-                        if os.path.exists(path):
-                            pass
+            else:
+                valid = False
+                while valid == False:
+                    if os.path.exists(path):
+                        pass
 
 
-            new_family_doc.Close(False)
+        new_family_doc.Close(False)
 
-            del_t = DB.Transaction(doc, "New Host Family")
-            del_t.Start()
+        del_t = DB.Transaction(doc, "New Host Family")
+        del_t.Start()
 
-            class CustomFamilyLoadOptions(DB.IFamilyLoadOptions):
-                def OnFamilyFound(self, familyInUse, overwriteParameterValues):
-                    overwriteParameterValues.Value = False
-                    return True
+        class CustomFamilyLoadOptions(DB.IFamilyLoadOptions):
+            def OnFamilyFound(self, familyInUse, overwriteParameterValues):
+                overwriteParameterValues.Value = False
+                return True
 
-                def OnSharedFamilyFound(self, sharedFamily, familyInUse, source, overwriteParameterValues):
-                    source.Value = DB.FamilySource.Family
-                    overwriteParameterValues.Value = False
-                    return False
+            def OnSharedFamilyFound(self, sharedFamily, familyInUse, source, overwriteParameterValues):
+                source.Value = DB.FamilySource.Family
+                overwriteParameterValues.Value = False
+                return False
 
-            new_family = DB.Document.LoadFamily(doc, path, CustomFamilyLoadOptions())
+        new_family = DB.Document.LoadFamily(doc, path, CustomFamilyLoadOptions())
 
-            # 0 index returns if the load was successful or not
-            if new_family[0]:
+        # 0 index returns if the load was successful or not
+        if new_family[0]:
 
-                # 1 index returns the family instance that was loaded
-                fam_symbols = new_family[1].GetFamilySymbolIds()
+            # 1 index returns the family instance that was loaded
+            fam_symbols = new_family[1].GetFamilySymbolIds()
 
-                # get familysymbolids always returns a list
-                for elem_id in fam_symbols:
-                    symbol = DB.Document.GetElement(doc, elem_id)
-                    if not symbol.IsActive:
-                        # I don't really know what this does, but families must be activated to be used
-                        symbol.Activate()
-                    new_fam_symbol = symbol
+            # get familysymbolids always returns a list
+            for elem_id in fam_symbols:
+                symbol = DB.Document.GetElement(doc, elem_id)
+                if not symbol.IsActive:
+                    # I don't really know what this does, but families must be activated to be used
+                    symbol.Activate()
+                new_fam_symbol = symbol
 
-                # place the combined family in the host document
-                doc.Create.NewFamilyInstance(insertion_point, new_fam_symbol, ST.StructuralType.NonStructural)
+            # place the combined family in the host document
+            doc.Create.NewFamilyInstance(insertion_point, new_fam_symbol, ST.StructuralType.NonStructural)
 
-                # delete the original families
-                if self.delete_original:
-                    for elem in collector:
-                        if elem.GroupId == DB.ElementId.InvalidElementId:
-                            try:
-                                DB.Document.Delete(doc, elem.Id)
-                            except:
-                                print("Could not delete original item (for unknown reasons): " + elem.Name + " " + output.linkify(
-                                        elem.Id))
-                        else:
-                            from pyrevit import script
-                            output = script.get_output()
-                            print("Could not delete original item (it's in a group): " + elem.Name + " " + output.linkify(elem.Id))
+            # delete the original families
+            if self.delete_original:
+                for elem in collector:
+                    if elem.GroupId == DB.ElementId.InvalidElementId:
+                        try:
+                            DB.Document.Delete(doc, elem.Id)
+                        except:
+                            print("Could not delete original item (for unknown reasons): " + elem.Name + " " + output.linkify(
+                                    elem.Id))
+                    else:
+                        from pyrevit import script
+                        output = script.get_output()
+                        print("Could not delete original item (it's in a group): " + elem.Name + " " + output.linkify(elem.Id))
 
 
-            del_t.Commit()
+        del_t.Commit()
         self.Close()
 
 SettingsWindow().ShowDialog()
