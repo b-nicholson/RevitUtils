@@ -24,6 +24,7 @@
                     6. It could be helpful to select parameters of the selected families and to assign it back to a common parameter if it already exists in the template file (common shared parameters), with an option to preset a desired param value within the host document. (this is decently complicated to code, and it could be potentially too much for non-power users)<LineBreak/>
                     7. This User Interface is atrocious.<LineBreak/>
                     8. Needs option to ensure all child families are set to shared.<LineBreak/>
+					9. I found a bug in the pyRevit framework that clashes with some of the core functionality of my add-in. That's why the selection process for this sucks, and why there's no progress bar as its running. It'll look like it crashed but it hasn't, this code just runs a bit slow. <LineBreak/>
                 </TextBlock>
             </StackPanel>
             
