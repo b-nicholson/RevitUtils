@@ -1,0 +1,79 @@
+<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Name="window"
+        Title="Transfer Families from Project to Parent Family" MaxHeight="1000" MaxWidth="1800" ShowInTaskbar="True" Width="800" MinWidth="450" MinHeight ="150" 
+        WindowStartupLocation="CenterScreen" Top="25" Left="100" SizeToContent="Height" HorizontalContentAlignment="Center" ResizeMode="CanResizeWithGrip">
+
+    <StackPanel Margin="20">
+        <Expander Header="Relevant Info and Disclaimers" IsExpanded="True">
+            <StackPanel>
+                <TextBlock Margin="0,10,0,0"><Run Text="This is "/><Run FontStyle="Italic" FontWeight="Bold" Text="extremely "/><Run Text="in progress, it is currently at the minimum degree of completion of this workflow that I could even consider releasing."/></TextBlock>
+                <TextBlock>
+                    <LineBreak/>
+                    Save your work before using this.
+                    <LineBreak/>
+                </TextBlock>
+                <TextBlock TextWrapping="WrapWithOverflow">
+                    <LineBreak/>
+                    Known issues / Things To Improve:<LineBreak/>
+                    1. Instance-based material assignments will not copy over <LineBreak/>
+                    2. There are no "safety nets" -  you can still do something invalid that will throw errors. <LineBreak/>
+                    3. In place families will not be copied over, and will generate errors. Use the pychillizer tool to convert them first. (I will merge that functionality into this tool<LineBreak/>
+                    4. User template directories should be able to be saved.<LineBreak/>
+                    5. Line based families are not currently supported.<LineBreak/>
+                    6. It could be helpful to select parameters of the selected families and to assign it back to a common parameter if it already exists in the template file (common shared parameters), with an option to preset a desired param value within the host document. (this is decently complicated to code, and it could be potentially too much for non-power users)<LineBreak/>
+                    7. This User Interface is atrocious.<LineBreak/>
+                    8. Needs option to ensure all child families are set to shared.<LineBreak/>
+                </TextBlock>
+            </StackPanel>
+            
+            
+        </Expander>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="244"/>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="20"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+
+            <Label Content="New Family Category"/>
+            <ComboBox x:Name="cb_fam_category" Grid.Column="1" Grid.ColumnSpan="2"  ItemsSource="{Binding}" DisplayMemberPath="Name" SelectedValuePath="Name" IsReadOnly="True" SelectionChanged="changed_category"/>
+            
+            <Label Content="Family Template Directory" Grid.Row="2"/>
+            <TextBox x:Name="tb_template_dir" TextChanged="template_dir_changed" Grid.Row="2" Grid.Column="1"/>
+            <Button x:Name="set_dir" Content="..." Grid.Row="2" Grid.Column="2" Click="click_fam_template_dir"/>
+            
+            <Label x:Name="dir_warning" Content="File Does Not Exist!" Grid.Row="3" Grid.ColumnSpan="3" FontStyle="Italic" Foreground="Red" HorizontalContentAlignment="Center" />
+            
+            <Label Content="Enable Room Calculation Point" Grid.Row="4"/>
+            <CheckBox x:Name="cx_room_calc_pt" Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2" IsChecked="True"/>
+            
+            <Label Content="Attempt to Delete Original Family Instances" Grid.Row="5"/>
+            <CheckBox x:Name="cx_delete_og_fams" Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="2" IsChecked="True"/>
+
+            <Label Content="New Family Name" Grid.Row="6"/>
+            <TextBox x:Name="tb_fam_name" Grid.Row="6" Grid.Column="1" Grid.ColumnSpan="2" TextChanged="name_changed"/>
+
+            <Label x:Name="name_warning" Content="Invalid Family Name! Pick a name that has not already been used in the project" Grid.Row="7" Grid.ColumnSpan="3" FontStyle="Italic" Foreground="Red" HorizontalContentAlignment="Center" />
+
+            <Label Content="Directory To Save New Family" Grid.Row="8"/>
+            <TextBox x:Name="tb_file_dir" Grid.Row="8" Grid.Column="1" TextChanged="save_dir_changed"/>
+            <Button x:Name="set_file_dir" Content="..." Grid.Row="8" Grid.Column="2"  Click="click_save_dir"/>
+
+            <Label x:Name="dir_file_warning" Content="Directory Does Not Exist!" Grid.Row="9" Grid.ColumnSpan="3" FontStyle="Italic" Foreground="Red" HorizontalContentAlignment="Center" />
+        </Grid>
+        <Button Content="Run" Click="click_run"/>
+    </StackPanel>
+</Window>
