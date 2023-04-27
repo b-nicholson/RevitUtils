@@ -649,7 +649,7 @@ class SettingsWindow(WPFWindow):
                 new_fam_symbol = symbol
 
             # place the combined family in the host document
-            doc.Create.NewFamilyInstance(insertion_point, new_fam_symbol, self._level, ST.StructuralType.NonStructural)
+            doc.Create.NewFamilyInstance(DB.XYZ(insertion_point.X, insertion_point.Y, 0), new_fam_symbol, self._level, ST.StructuralType.NonStructural)
 
             # delete the original families
             if self.delete_original:
