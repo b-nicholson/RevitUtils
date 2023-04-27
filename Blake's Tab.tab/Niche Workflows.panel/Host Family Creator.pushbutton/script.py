@@ -390,6 +390,8 @@ class SettingsWindow(WPFWindow):
 
         '''clean this up, it should be smarter than just grabbing the first instance in the selection'''
         self._host_cat = collector[0].Category
+        '''this is extremely clunky, clean this up'''
+        self._level = DB.Document.GetElement(doc, collector[0].LevelId)
 
         self.setup_categories(self.host_category)
         self.setup_template_dir(self.host_category)
@@ -647,7 +649,7 @@ class SettingsWindow(WPFWindow):
                 new_fam_symbol = symbol
 
             # place the combined family in the host document
-            doc.Create.NewFamilyInstance(insertion_point, new_fam_symbol, ST.StructuralType.NonStructural)
+            doc.Create.NewFamilyInstance(insertion_point, new_fam_symbol, self._level, ST.StructuralType.NonStructural)
 
             # delete the original families
             if self.delete_original:
