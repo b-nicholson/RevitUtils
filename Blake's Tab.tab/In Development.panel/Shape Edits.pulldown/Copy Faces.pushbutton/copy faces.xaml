@@ -1,0 +1,41 @@
+<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Copy Faces to Floor/Roof" ShowInTaskbar="True" Width="520" Height="275" ResizeMode="CanResizeWithGrip"
+        WindowStartupLocation="CenterScreen" ScrollViewer.VerticalScrollBarVisibility="Disabled" HorizontalContentAlignment="Center">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+    <StackPanel Margin="20" HorizontalAlignment="Stretch">
+        <Expander Header="Instructions">
+            <TextBlock TextWrapping="WrapWithOverflow"><Run Text="This tool is used for shape editing floors/roofs based on existing geometry. First, you select the faces you want to copy over to a floor or roof. Second, you select the floor/roof you wish to edit. Finally, input the vertical offset you wish to maintain from the source faces."/><LineBreak/><Run/><LineBreak/><Run Text="This currently only works for targets who's perimeter fully encloses the faces, and faces/targets within the same document. It won't fix vertical / overhanginging surfaces. I'll add more functionality later this is just the specific use case I needed. If you need more asap let me know."/></TextBlock>
+
+        </Expander>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="0.3*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+
+            <Label Content="Select Faces:" Grid.Column="0" Grid.Row="0"/>
+            <Button Content="Select..." Grid.Column="1" Grid.Row="0" Grid.ColumnSpan="2" Click="click_select_faces"/>
+            <Label Content="Select Floor/Roof To Edit:" Grid.Column="0" Grid.Row="1"/>
+            <Button Content="Select..." Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="2" Click="click_select_target"/>
+            <Label Content="Vertical Offset from Original Face" Grid.Column="0" Grid.Row="2"/>
+            <TextBox x:Name="tb_offset" Grid.Column="1"  Grid.Row="2" Text="0.00" TextChanged="offset_changed"/>
+            <ComboBox Grid.Column="2" Grid.Row="2" x:Name="export_units_cb"/>
+
+
+
+        </Grid>
+        <Button Content="Run" x:Name="button_run" Click="click_run" IsEnabled="False" Margin="0,30,0,30"/>
+    </StackPanel>
+    </ScrollViewer>
+</Window>
