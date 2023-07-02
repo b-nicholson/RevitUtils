@@ -25,6 +25,7 @@ class ISelectionFilerMultipleCats(UI.Selection.ISelectionFilter):
 def select_single_w_multiple_cats_by_name(title, doc, categories_list, exit):
     with forms.WarningBar(title=title):
         new_selection_completed = False
+        selection_target = None
         while new_selection_completed is not True:
             try:
                 select_by_type = uidoc.Selection.PickObject(UI.Selection.ObjectType.Element,
