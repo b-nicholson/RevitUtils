@@ -4,6 +4,7 @@ from Shape_Edits.shape_edits import clean_lines, add_split_lines
 from Units.unit_conversions import convert_mm_or_in_to_internal_units
 from Select.iselectors import select_single_w_multiple_cats_by_name
 from Events.event import CustomizableEvent
+from Modeless_Exceptions.modeless_exception import print_traceback
 
 from pyrevit.forms import WPFWindow
 from pyrevit.framework import Windows
@@ -11,6 +12,9 @@ from pyrevit.framework import Windows
 import Autodesk.Revit.DB as DB
 
 from System.Collections.Generic import List
+
+
+
 
 app = __revit__.Application
 doc = __revit__.ActiveUIDocument.Document
@@ -29,13 +33,13 @@ def click_faces():
         return faces
 
     except Exception as e:
-        print(e)
+        print_traceback()
 
 def select_target():
     try:
         return select_single_w_multiple_cats_by_name('Pick Target Floor/Roof:', doc, ["Roofs", "Floors"], False)
     except Exception as e:
-        print(e)
+        print_traceback()
 
 def run(faces, target, offset, units):
     all_edges = []
@@ -114,7 +118,7 @@ class ModelessForm(WPFWindow):
                 sender.Content = "No Faces Selected!"
             self.check_ready()
         except Exception as e:
-            print(e)
+            print_traceback()
 
     def click_select_target(self, sender, e):
         try:
@@ -128,13 +132,13 @@ class ModelessForm(WPFWindow):
                 sender.Content = type_name + " Id: " + id
             self.check_ready()
         except Exception as e:
-            print(e)
+            print_traceback()
 
     def click_run(self, sender, e):
         try:
             customizable_event.raise_event(run, self.faces, self.target, float(self.tb_offset.Text), self.export_units_cb.SelectedIndex)
         except Exception as e:
-            print(e)
+            print_traceback()
 
     def offset_changed(self, sender, e):
         try:
@@ -147,7 +151,7 @@ class ModelessForm(WPFWindow):
                     sender.Text = self.last_text
                     sender.CaretIndex = e.Changes[0].Offset
         except Exception as e:
-            print(e)
+            print_traceback()
 
 
 
