@@ -432,18 +432,24 @@ class SettingsWindow(WPFWindow):
 
             message_settings = self.cx_fail_only.IsChecked
 
+            if dr_num is None:
+                dr_numstring = ""
+            else:
+                dr_numstring = dr_num
+
             if (actual_to_room_id == to_room_id) or (actual_to_room_id == from_room_id):
                 if to_room_name is None and from_room_name is None:
-                    print (output.linkify(door.Id) + "" + dr_num + " Door has no rooms touching it, so it is ignored")
+
+                    print (output.linkify(door.Id) + "" + dr_numstring + " Door has no rooms touching it, so it is ignored")
 
                 elif to_room_id == from_room_id:
-                    print (output.linkify(door.Id) + "" + dr_num + " Door only has same to/from room, it is ignored")
+                    print (output.linkify(door.Id) + "" + dr_numstring + " Door only has same to/from room, it is ignored")
 
                 elif is_an_oddball and actual_to_room_id != from_room_id:
                     if not self.report_only:
                         door.FlipFromToRoom()
                     if not message_settings:
-                        print (output.linkify(door.Id) + "" + dr_num + " Successfully changed as per user inputted intentionally reversed condition")
+                        print (output.linkify(door.Id) + "" + dr_numstring + " Successfully changed as per user inputted intentionally reversed condition")
 
 
                 elif actual_to_room_id != to_room_id and not is_an_oddball:
@@ -451,12 +457,12 @@ class SettingsWindow(WPFWindow):
                     if not self.report_only:
                         door.FlipFromToRoom()
                     if not message_settings:
-                        print (output.linkify(door.Id) + "" + dr_num + " Successfully changed")
+                        print (output.linkify(door.Id) + "" + dr_numstring + " Successfully changed")
                 elif not message_settings:
-                    print (output.linkify(door.Id) + "" + dr_num + " Ignored, it is already correct")
+                    print (output.linkify(door.Id) + "" + dr_numstring + " Ignored, it is already correct")
 
             else:
-                print (output.linkify(door.Id) + "" + dr_num + \
+                print (output.linkify(door.Id) + "" + dr_numstring + \
                        " Multiple rooms are intersecting the door, which is causing errors. Check the 3D extents of rooms that are beside/above/below the door")
 
         t.Commit()
