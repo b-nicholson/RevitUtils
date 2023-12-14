@@ -27,6 +27,10 @@ def print_welcome():
     <ul>\
         <li>If you try to create a Model in Place Component it will produce a warning, but still allow you to do it. This is a tool for mindfulness.</li>\
     </ul>\
+        <p><strong>Printing With Closed Worksets</strong></p>\
+    <ul>\
+        <li>If you go to print with any worksets closed, it will warn you before you start the process.</li>\
+    </ul>\
     <p><strong>Ungroup Groups</strong></p>\
     <ul>\
         <li>I dont know about you, but I misclick this a lot. No idea who thought having it beside Edit Group in the UI was a good idea. Not noticing it was accidentally ungrouped has bad consequences. The plugin will give you a warning before ungrouping.</li>\
