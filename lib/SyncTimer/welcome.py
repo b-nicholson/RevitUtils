@@ -6,7 +6,7 @@ def print_welcome():
     output.print_html("<h1><strong>Welcome!</strong></h1>\
     <p>&nbsp;</p>\
     <p>Thanks for installing my extension. It is currently, and probably will forever be, a work in progress. If something goes wrong, or if you have any suggestions please let me know.</p>\
-    <p>It installs a new Tab at the top of the Revit Ribbon called <em>Blake&#39;s Tab. </em>Inside are a variety of small tools that I will do my best to keep adding to.</p>\
+    <p>It installs a new Tab at the top of the Revit Ribbon called <em>pyLoop</em>Inside are a variety of small tools that I will do my best to keep adding to.</p>\
     <p>&nbsp;</p>\
     <p>There are some utilities that work in the background which modify the way Revit operates, but are not immediately obvious that they&#39;re running. They are explained below:</p>\
     <p>&nbsp;</p>\

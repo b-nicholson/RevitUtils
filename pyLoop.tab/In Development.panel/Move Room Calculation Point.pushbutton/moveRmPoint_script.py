@@ -13,7 +13,6 @@ import clr
 import os
 
 clr.AddReference('System.Windows.Forms')
-clr.AddReference('IronPython.Wpf')
 clr.AddReference('System')
 from pyrevit import script
 from System import Windows, Uri

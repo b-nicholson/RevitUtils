@@ -5,7 +5,6 @@ import clr
 import os
 
 clr.AddReference('System.Windows.Forms')
-clr.AddReference('IronPython.Wpf')
 clr.AddReference('System')
 from System.Collections.Generic import List
 from pyrevit import script, revit, HOST_APP, forms

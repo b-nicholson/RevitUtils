@@ -2,7 +2,6 @@
 __title__ = 'Sync With Central\nTimer Settings'
 import clr
 clr.AddReference('System.Windows.Forms')
-clr.AddReference('IronPython.Wpf')
 clr.AddReference('System')
 clr.AddReference("PresentationCore")
 clr.AddReference("PresentationFramework")
@@ -38,6 +37,10 @@ class SwcTimerSettings(Windows.Window):
         make_collab_tab_active(ribbon)
 
         # Load user configs
+        try:
+            warning_colour_str = user_config.swc_timer.get_option("warning_colour", "#FF0000")
+        except AttributeError:
+            user_config.add_section("swc_timer")
         warn_clr = make_colour(user_config.swc_timer.get_option("warning_colour", "#FFE78F8F"))
         high_clr = make_colour(user_config.swc_timer.get_option("highlight_colour", "#FFADEFAD"))
         self.warning_colour.Background = warn_clr
