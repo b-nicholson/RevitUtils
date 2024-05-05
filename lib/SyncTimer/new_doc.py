@@ -9,7 +9,7 @@ def new_doc(doc):
 
     ribbon = get_ribbon()
 
-    app = __revit__.Application
+    app = doc.Application
     rvt_year = int(app.VersionNumber)
     if rvt_year > 2023:
         import Autodesk.Revit.UI as UI
