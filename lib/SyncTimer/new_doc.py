@@ -1,6 +1,6 @@
 def new_doc(doc):
 
-    from pyrevit import EXEC_PARAMS
+    from pyrevit import EXEC_PARAMS, HOST_APP
     from pyrevit.coreutils import envvars
     from pyrevit.userconfig import user_config
     from datetime import datetime
@@ -9,12 +9,26 @@ def new_doc(doc):
 
     ribbon = get_ribbon()
 
+    app = __revit__.Application
+    rvt_year = int(app.VersionNumber)
+    if rvt_year > 2023:
+        import Autodesk.Revit.UI as UI
+        theme = UI.UIThemeManager.CurrentTheme;
+        if theme == UI.UITheme.Dark:
+            base_colour_str = "#3b4453"
+        else:
+            base_colour_str = "#EEEEEE"
+    else:
+        base_colour_str = "#EEEEEE"
+
+
+
     if doc.IsWorkshared and not doc.IsDetached:
 
         doc_id = str(doc.GetHashCode())
 
         # Create variables
-        base_colour_str = "#EEEEEE"  # comes from Revit - may need to check future releases
+
         base_colour = make_colour(base_colour_str)
         try:
             warning_colour_str = user_config.swc_timer.get_option("warning_colour", "#FF0000")
@@ -58,4 +72,4 @@ def new_doc(doc):
         envvars.set_pyrevit_env_var(env_var_ribbon_name, ribbon)
         envvars.set_pyrevit_env_var("last_doc", doc)
 
-        change_ribbon_colours(ribbon, make_colour("#EEEEEE"))
+        change_ribbon_colours(ribbon, make_colour(base_colour_str))
