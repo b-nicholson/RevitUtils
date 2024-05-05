@@ -2,7 +2,7 @@ def print_welcome():
 
     # from pyrevit import script
     import webbrowser
-    webbrowser.open("https://github.com/b-nicholson/RevitUtils/blob/master/lib/SyncTimer/welcome.html")
+    webbrowser.open("https://htmlpreview.github.io/?https://github.com/b-nicholson/RevitUtils/blob/master/lib/SyncTimer/welcome.html")
 
     # output = script.get_output()
     # output.print_html("<h1><strong>Welcome!</strong></h1>\
